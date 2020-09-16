@@ -69,6 +69,10 @@ PID_D = 0.5
 lastErr = nil
 errIntegral = 0
 function moveTowardsTarget()
+    if not isKeyPressed(VK_SHIFT) then
+        return
+    end
+
     local _UP = vec3(0, 1, 0)
     local forward = playerHeading()
     local right = vCross(forward, _UP)
@@ -89,13 +93,28 @@ function moveTowardsTarget()
     lastErr = err
     errIntegral = math.min(5, (errIntegral + err) * 0.9)
 
-    local rate = math.min(100, 100 * math.abs(pid))
+    local baseRate = baseMouseSpeed()
+    local rate = math.min(baseRate, baseRate * math.abs(pid))
     local dx = -xDot
     local dy = -yDot
     local len = math.sqrt(dx * dx + dy * dy)
     dx = dx * rate / len
     dy = dy * rate / len
     mouse_event(MOUSEEVENTF_MOVE, dx, dy)
+end
+
+function baseMouseSpeed()
+    local playerPtr = readInteger("playerPtr")
+    local zoomState = readBytes(playerPtr + 0x320)
+    if zoomState == 0xFF then
+        return 100
+    end
+    if zoomState == 0x00 then
+        return 200
+    end
+    if zoomState == 0x01 then
+        return 600
+    end
 end
 
 function playerHeading()
@@ -107,7 +126,7 @@ function desiredHeading()
     if bestEntity ~= nil then
         adr = bestEntity
     end
-    return vNormalized(vecToEntity(0x40106C90))
+    return vNormalized(vecToEntity(adr))
 end
 
 function vecToEntity(address)
@@ -118,13 +137,21 @@ end
 
 bestEntity = nil
 function entityScore(address)
+    local health = readFloat(address + 0xE0)
+    if health <= 0 then
+        return 0
+    end
     local heading = playerHeading()
     local offset = vecToEntity(address)
-    offset = vScale(offset, 1 / vLengthSq(offset))
+    local len = math.sqrt(vLengthSq(offset))
+    offset = vScale(offset, 1 / len)
     return vDot(offset, heading)
 end
 
 function addEntity(address)
+    if bestEntity == nil then
+        bestEntity = address
+    end
     local newScore = entityScore(address)
     local oldScore = entityScore(bestEntity)
     if newScore > oldScore then
