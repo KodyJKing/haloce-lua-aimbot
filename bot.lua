@@ -1,3 +1,5 @@
+local vec = require("vector")
+
 -- Start Trigger
 if triggerTimer == nil then
     triggerTimer = createTimer(nil, false)
@@ -73,17 +75,17 @@ function moveTowardsTarget()
         return
     end
 
-    local _UP = vec3(0, 1, 0)
+    local _UP = vec.new(0, 1, 0)
     local forward = playerHeading()
-    local right = vCross(forward, _UP)
-    local up = vCross(right, forward)
+    local right = vec.cross(forward, _UP)
+    local up = vec.cross(right, forward)
 
     local desired = desiredHeading()
-    local xDot = vDot(right, desired)
-    local yDot = vDot(up, desired)
+    local xDot = vec.dot(right, desired)
+    local yDot = vec.dot(up, desired)
     --print(vString(forward) .. vString(right) .. vString(up))
 
-    local err = math.acos(vDot(forward, desired))
+    local err = math.acos(vec.dot(forward, desired))
 
     local pid = PID_P * err + PID_I * errIntegral
     if lastErr ~= nil then
@@ -118,7 +120,7 @@ function baseMouseSpeed()
 end
 
 function playerHeading()
-    return readVec(readInteger("playerPtr"), 0x230)
+    return vec.read(readInteger("playerPtr"), 0x230)
 end
 
 function desiredHeading()
@@ -126,12 +128,12 @@ function desiredHeading()
     if bestEntity ~= nil then
         adr = bestEntity
     end
-    return vNormalized(vecToEntity(adr))
+    return vec.normalized(vecToEntity(adr))
 end
 
 function vecToEntity(address)
-    local playerPos = readVec(readInteger("playerPtr"), 0xA0)
-    local targetPos = readVec(address, 0xA0)
+    local playerPos = vec.read(readInteger("playerPtr"), 0xA0)
+    local targetPos = vec.read(address, 0xA0)
     return vSub(targetPos, playerPos)
 end
 
@@ -144,8 +146,8 @@ function entityScore(address)
     local heading = playerHeading()
     local offset = vecToEntity(address)
     local len = math.sqrt(vLengthSq(offset))
-    offset = vScale(offset, 1 / len)
-    return vDot(offset, heading)
+    offset = vec.scale(offset, 1 / len)
+    return vec.dot(offset, heading)
 end
 
 function addEntity(address)
@@ -161,65 +163,6 @@ end
 
 print("Aim bot ready, hit F4 to toggle.")
 -- End Aim
-
--- Start Vector
-function vec3(x, y, z)
-    return {x = x, y = y, z = z}
-end
-
-function readVec(basePtr, offset)
-    return vec3(readFloat(basePtr + offset), readFloat(basePtr + offset + 0x8), readFloat(basePtr + offset + 0x4))
-end
-
-function vScale(a, b)
-    return {
-        x = a.x * b,
-        y = a.y * b,
-        z = a.z * b
-    }
-end
-
-function vAdd(a, b)
-    return {
-        x = a.x - b.x,
-        y = a.y - b.y,
-        z = a.z - b.z
-    }
-end
-
-function vSub(a, b)
-    return {
-        x = a.x - b.x,
-        y = a.y - b.y,
-        z = a.z - b.z
-    }
-end
-
-function vDot(a, b)
-    return a.x * b.x + a.y * b.y + a.z * b.z
-end
-
-function vCross(a, b)
-    return {
-        x = a.y * b.z - a.z * b.y,
-        y = a.z * b.x - a.x * b.z,
-        z = a.x * b.y - a.y * b.x
-    }
-end
-
-function vLengthSq(a)
-    return a.x * a.x + a.y * a.y + a.z * a.z
-end
-
-function vNormalized(a)
-    local len = math.sqrt(vLengthSq(a))
-    return vScale(a, 1 / len)
-end
-
-function vString(a)
-    return "{ x = " .. a.x .. ", y = " .. a.y .. ", z = " .. a.z .. " }"
-end
--- End Vector
 
 function message(msg)
     print(msg)
