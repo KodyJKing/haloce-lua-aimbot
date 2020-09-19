@@ -19,7 +19,7 @@ end
 
 timers = {}
 hotkeys = {}
-function createBotTimer(name, hotkey, interval, onTimer)
+function createBotTimer(name, hotkeyName, hotkey, interval, onTimer)
     timers[name] = createTimer(nil, false)
     timers[name].OnTimer = function()
         if gameRunningAndFocused() then
@@ -39,7 +39,7 @@ function createBotTimer(name, hotkey, interval, onTimer)
         end,
         hotkey
     )
-    print(name .. " ready, hit F5 to toggle.")
+    print(name .. " ready, hit " .. hotkeyName .. " to toggle.")
 end
 
 function onReload()
@@ -58,6 +58,7 @@ local aimbot = require("aimbot")
 
 createBotTimer(
     "Trigger bot",
+    "F5",
     VK_F5,
     10,
     function()
@@ -69,7 +70,7 @@ createBotTimer(
         end
     end
 )
-createBotTimer("Aim bot", VK_F4, 5, aimbot.update)
+createBotTimer("Aim bot", "F4", VK_F4, 10, aimbot.update)
 
 tickEntity = aimbot.tickEntity
 

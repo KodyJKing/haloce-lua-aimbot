@@ -3,7 +3,10 @@ local vec = require("vector")
 local module = {reloadonrun = true}
 
 function module.update()
-    if not isKeyPressed(VK_SHIFT) then
+    if not verifyTarget(targetEntity) then
+        targetEntity = nil
+    end
+    if not isKeyPressed(VK_SHIFT) or targetEntity == nil then
         return
     end
     local desired = desiredHeading()
@@ -15,15 +18,10 @@ function module.update()
     setAngles(yaw, pitch)
 end
 
--- TAU = 2 * 3.14159
--- HALFPI = 3.14159 * 0.5
 function setAngles(yaw, pitch)
-    -- if yaw < 0 then
-    --     yaw = yaw + TAU
-    -- end
-    -- if pitch < -HALFPI then
-    --     pitch = pitch + TAU
-    -- end
+    if (yaw == math.nan) or (pitch == math.nan) then
+        return
+    end
     local anglesPtr = readInteger("anglesPtr")
     local yawPtr = anglesPtr + 0x0C
     local pitchPtr = anglesPtr + 0x10
@@ -36,10 +34,10 @@ function playerHeading()
 end
 
 function desiredHeading()
-    if bestEntity == nil then
+    if targetEntity == nil then
         return vec.new(0, 1, 0)
     end
-    return vecToEntity(bestEntity)
+    return vecToEntity(targetEntity)
 end
 
 function vecToEntity(address)
@@ -72,7 +70,7 @@ function entityHeadOffset(address)
     return result
 end
 
-bestEntity = nil
+targetEntity = nil
 function entityScore(address)
     local health = readFloat(address + 0xE0)
     if health <= 0 then
@@ -93,18 +91,35 @@ function entityTypeString(address)
     if entityTypes[type] ~= nil then
         return entityTypes[type]
     end
-    return string.format("%x", type)
+    if type ~= nil then
+        return string.format("%x", type)
+    end
+    return "????"
+end
+
+function verifyTarget(address)
+    if address == nil or entityTypeString(address) == "marine" then
+        return false
+    end
+    local health = readFloat(address + 0xE0)
+    if health <= 0 or health > 1 then
+        return false
+    end
+    return true
 end
 
 function module.tickEntity(address)
-    if bestEntity == nil then
-        bestEntity = address
+    if not verifyTarget(address) then
+        return
+    end
+    if targetEntity == nil then
+        targetEntity = address
     end
     local newScore = entityScore(address)
-    local oldScore = entityScore(bestEntity)
+    local oldScore = entityScore(targetEntity)
     if newScore > oldScore then
-        bestEntity = address
-        print("Targeting " .. entityTypeString(address))
+        targetEntity = address
+    -- print("Targeting " .. entityTypeString(address))
     end
 end
 
