@@ -140,7 +140,7 @@ function module.addEntity(address)
     local oldScore = entityScore(bestEntity)
     if newScore > oldScore then
         bestEntity = address
-        print("Targeting " .. entityTypeString(address))
+    -- print("Targeting " .. entityTypeString(address))
     end
 end
 
