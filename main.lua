@@ -71,6 +71,6 @@ createBotTimer(
 )
 createBotTimer("Aim bot", VK_F4, 5, aimbot.update)
 
-addEntity = aimbot.addEntity
+tickEntity = aimbot.tickEntity
 
 return onReload

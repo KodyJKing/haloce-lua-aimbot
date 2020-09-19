@@ -807,7 +807,7 @@ db 'CELUASERVER',0
 
 globalalloc(functionString, 256)
 functionString:
-db 'addEntity(parameter)',0
+db 'tickEntity(parameter)',0
 
 [ENABLE]
 

@@ -81,9 +81,14 @@ end
 
 function vecToEntity(address)
     local playerPos = vec.read(readInteger("playerPtr"), 0xA0)
-    local targetPos = vec.read(address, 0xA0)
-    targetPos = vec.add(targetPos, entityHeadOffset(address))
+    local targetPos = targetHeadPos(address)
     return vec.sub(targetPos, playerPos)
+end
+
+function targetHeadPos(address)
+    local eyePos = vec.read(address, 0xA0)
+    local headOffset = entityHeadOffset(address)
+    return vec.add(eyePos, headOffset)
 end
 
 function entityHeadOffset(address)
@@ -132,7 +137,7 @@ function entityTypeString(address)
     return string.format("%x", type)
 end
 
-function module.addEntity(address)
+function module.tickEntity(address)
     if bestEntity == nil then
         bestEntity = address
     end
