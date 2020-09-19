@@ -2,11 +2,31 @@ local vec = require("vector")
 
 local module = {reloadonrun = true}
 
-PID_P = 1
-PID_I = 0.1
-PID_D = 0.5
-lastErr = nil
-errIntegral = 0
+function pidController(params)
+    local errorIntegral = 0
+    local lastError = nil
+    return function(error)
+        local output = params.p * error + params.i * errorIntegral
+        errorIntegral = math.min(params.maxIntegral, (errorIntegral + error) * params.integralDecay)
+        if lastError ~= nil then
+            local diff = error - lastError
+            output = output + diff * params.d
+        end
+        lastError = error
+        return output
+    end
+end
+
+nextPidValue =
+    pidController(
+    {
+        p = 1,
+        i = 0.1,
+        d = 1,
+        integralDecay = 0.9,
+        maxIntegral = 5
+    }
+)
 function module.update()
     if not isKeyPressed(VK_SHIFT) then
         return
@@ -21,15 +41,8 @@ function module.update()
     local xDot = vec.dot(right, desired)
     local yDot = vec.dot(up, desired)
 
-    local err = math.acos(vec.dot(forward, desired))
-
-    local pid = PID_P * err + PID_I * errIntegral
-    if lastErr ~= nil then
-        local errDiff = err - lastErr
-        pid = pid + errDiff * PID_D
-    end
-    lastErr = err
-    errIntegral = math.min(5, (errIntegral + err) * 0.9)
+    local error = math.acos(vec.dot(forward, desired))
+    local pid = nextPidValue(error)
 
     local baseRate = baseMouseSpeed()
     local rate = math.min(baseRate, baseRate * math.abs(pid))
@@ -69,10 +82,26 @@ end
 function vecToEntity(address)
     local playerPos = vec.read(readInteger("playerPtr"), 0xA0)
     local targetPos = vec.read(address, 0xA0)
+    targetPos = vec.add(targetPos, entityHeadOffset(address))
     return vec.sub(targetPos, playerPos)
 end
 
 function entityHeadOffset(address)
+    local type = entityTypeString(address)
+    local offsets = {
+        marine = {0.05, 0},
+        grunt = {0.17, -0.1},
+        jackal1 = {0.05, -0.05},
+        jackal2 = {0.05, -0.05},
+        elite = {0.1, 0.05}
+    }
+    local offset = offsets[type] or {0, 0}
+    local fwd, up = unpack(offset)
+    local result = vec.read(address, 0x230)
+    result.x = result.x * fwd
+    result.y = result.y * fwd + up
+    result.z = result.z * fwd
+    return result
 end
 
 bestEntity = nil
