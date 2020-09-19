@@ -4,7 +4,7 @@
     <CheatEntry>
       <ID>1</ID>
       <Description>"Infinite Shield"</Description>
-      <LastState Activated="1"/>
+      <LastState/>
       <VariableType>Auto Assembler Script</VariableType>
       <AssemblerScript>{ Game   : halo.exe
   Version: 
@@ -281,7 +281,7 @@ dealloc(newmem)
     <CheatEntry>
       <ID>5</ID>
       <Description>"SuperFire"</Description>
-      <LastState Activated="1"/>
+      <LastState/>
       <VariableType>Auto Assembler Script</VariableType>
       <AssemblerScript>{ Game   : halo.exe
   Version: 
@@ -602,7 +602,7 @@ dealloc(newmem)
       <ID>23</ID>
       <Description>"InjCopy isReticleRed"</Description>
       <Options moHideChildren="1" moManualExpandCollapse="1"/>
-      <LastState/>
+      <LastState Activated="1"/>
       <VariableType>Auto Assembler Script</VariableType>
       <AssemblerScript>{ Game   : halo.exe
   Version: 
@@ -686,7 +686,7 @@ dealloc(newmem)
     <CheatEntry>
       <ID>28</ID>
       <Description>"Track Entities"</Description>
-      <LastState/>
+      <LastState Activated="1"/>
       <VariableType>Auto Assembler Script</VariableType>
       <AssemblerScript>{ Game   : halo.exe
   Version: 
@@ -1165,7 +1165,7 @@ dealloc(newmem)
         <Byte>00</Byte>
       </After>
     </CodeEntry>
-    <CodeEntry Color="80000008">
+    <CodeEntry Color="20000000">
       <Description>d3dCreate9Ex</Description>
       <AddressString>d3d9.dll+CF99</AddressString>
       <Before>
@@ -1190,7 +1190,7 @@ dealloc(newmem)
   <UserdefinedSymbols>
     <SymbolEntry>
       <Name>playerPtr</Name>
-      <Address>03730000</Address>
+      <Address>009A0110</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>isReticleRedPtr</Name>
@@ -1198,11 +1198,11 @@ dealloc(newmem)
     </SymbolEntry>
     <SymbolEntry>
       <Name>isReticleRed</Name>
-      <Address>008A0010</Address>
+      <Address>009A0100</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>functionString</Name>
-      <Address>008A0020</Address>
+      <Address>009A0000</Address>
     </SymbolEntry>
   </UserdefinedSymbols>
   <Structures StructVersion="2">
@@ -1951,237 +1951,70 @@ dealloc(newmem)
       </Elements>
     </Structure>
   </Structures>
-  <LuaScript>-- Start Trigger
-if triggerTimer == nil then
-    triggerTimer = createTimer(nil, false)
-end
-
-triggerTimer.OnTimer = function(timer)
-    local value = readBytes("isReticleRed")
-    if value == 1 then
-        mouse_event(MOUSEEVENTF_LEFTDOWN)
-        Sleep(5)
-        mouse_event(MOUSEEVENTF_LEFTUP)
-        Sleep(5)
-    end
-end
-
-triggerTimer.Interval = 10
-
-if triggerKey then
-    triggerKey.Destroy()
-end
-
-triggerKey =
-    createHotkey(
-    function()
-        triggerTimer.Enabled = not triggerTimer.Enabled
-        if triggerTimer.Enabled then
-            message("Trigger bot enabled.")
-        else
-            message("Trigger bot disabled.")
+  <LuaScript>function reloadmodules()
+    for k, v in pairs(package.loaded) do
+        if type(v) == "table" and v.reloadonrun == true then
+            package.loaded[k] = nil
         end
-    end,
-    VK_F5
-)
-
-print("Trigger bot ready, hit F5 to toggle.")
--- End Trigger
-
--- Start Aim
-if aimTimer == nil then
-    aimTimer = createTimer(nil, false)
-end
-
-aimTimer.OnTimer = function(timer)
-    moveTowardsTarget()
-end
-
-aimTimer.Interval = 5
-
-if aimKey then
-    aimKey.Destroy()
-end
-
-aimKey =
-    createHotkey(
-    function()
-        aimTimer.Enabled = not aimTimer.Enabled
-        if aimTimer.Enabled then
-            message("Aim bot enabled.")
-        else
-            message("Aim bot disabled.")
-            errIntegral = 0
-        end
-    end,
-    VK_F4
-)
-
-PID_P = 1
-PID_I = 0.1
-PID_D = 0.5
-lastErr = nil
-errIntegral = 0
-function moveTowardsTarget()
-    if not isKeyPressed(VK_SHIFT) then
-        return
-    end
-
-    local _UP = vec3(0, 1, 0)
-    local forward = playerHeading()
-    local right = vCross(forward, _UP)
-    local up = vCross(right, forward)
-
-    local desired = desiredHeading()
-    local xDot = vDot(right, desired)
-    local yDot = vDot(up, desired)
-    --print(vString(forward) .. vString(right) .. vString(up))
-
-    local err = math.acos(vDot(forward, desired))
-
-    local pid = PID_P * err + PID_I * errIntegral
-    if lastErr ~= nil then
-        local errDiff = err - lastErr
-        pid = pid + errDiff * PID_D
-    end
-    lastErr = err
-    errIntegral = math.min(5, (errIntegral + err) * 0.9)
-
-    local baseRate = baseMouseSpeed()
-    local rate = math.min(baseRate, baseRate * math.abs(pid))
-    local dx = -xDot
-    local dy = -yDot
-    local len = math.sqrt(dx * dx + dy * dy)
-    dx = dx * rate / len
-    dy = dy * rate / len
-    mouse_event(MOUSEEVENTF_MOVE, dx, dy)
-end
-
-function baseMouseSpeed()
-    local playerPtr = readInteger("playerPtr")
-    local zoomState = readBytes(playerPtr + 0x320)
-    if zoomState == 0xFF then
-        return 100
-    end
-    if zoomState == 0x00 then
-        return 200
-    end
-    if zoomState == 0x01 then
-        return 600
     end
 end
-
-function playerHeading()
-    return readVec(readInteger("playerPtr"), 0x230)
-end
-
-function desiredHeading()
-    local adr = 0x40106C90
-    if bestEntity ~= nil then
-        adr = bestEntity
-    end
-    return vNormalized(vecToEntity(adr))
-end
-
-function vecToEntity(address)
-    local playerPos = readVec(readInteger("playerPtr"), 0xA0)
-    local targetPos = readVec(address, 0xA0)
-    targetPos.y = targetPos.y  - 0.05
-    return vSub(targetPos, playerPos)
-end
-
-bestEntity = nil
-function entityScore(address)
-    local health = readFloat(address + 0xE0)
-    if health &lt;= 0 then return 0 end
-    local heading = playerHeading()
-    local offset = vecToEntity(address)
-    local len = math.sqrt(vLengthSq(offset))
-    offset = vScale(offset, 1 / len)
-    return vDot(offset, heading)
-end
-
-function addEntity(address)
-    if bestEntity == nil then
-        bestEntity = address
-    end
-    local newScore = entityScore(address)
-    local oldScore = entityScore(bestEntity)
-    if newScore &gt; oldScore then
-        bestEntity = address
-    end
-end
-
-print("Aim bot ready, hit F4 to toggle.")
--- End Aim
-
--- Start Vector
-function vec3(x, y, z)
-    return {x = x, y = y, z = z}
-end
-
-function readVec(basePtr, offset)
-    return vec3(readFloat(basePtr + offset), readFloat(basePtr + offset + 0x8), readFloat(basePtr + offset + 0x4))
-end
-
-function vScale(a, b)
-    return {
-        x = a.x * b,
-        y = a.y * b,
-        z = a.z * b
-    }
-end
-
-function vAdd(a, b)
-    return {
-        x = a.x - b.x,
-        y = a.y - b.y,
-        z = a.z - b.z
-    }
-end
-
-function vSub(a, b)
-    return {
-        x = a.x - b.x,
-        y = a.y - b.y,
-        z = a.z - b.z
-    }
-end
-
-function vDot(a, b)
-    return a.x * b.x + a.y * b.y + a.z * b.z
-end
-
-function vCross(a, b)
-    return {
-        x = a.y * b.z - a.z * b.y,
-        y = a.z * b.x - a.x * b.z,
-        z = a.x * b.y - a.y * b.x
-    }
-end
-
-function vLengthSq(a)
-    return a.x * a.x + a.y * a.y + a.z * a.z
-end
-
-function vNormalized(a)
-    local len = math.sqrt(vLengthSq(a))
-    return vScale(a, 1 / len)
-end
-
-function vString(a)
-    return "{ x = " .. a.x .. ", y = " .. a.y .. ", z = " .. a.z .. " }"
-end
--- End Vector
 
 function message(msg)
     print(msg)
     speak(msg)
 end
 
-function clamp(x, min, max)
-    return math.max(min, math.min(max, x))
+timers = {}
+hotkeys = {}
+function createBotTimer(name, hotkey, interval, onTimer)
+    if timers[name] == nil then
+        timers[name] = createTimer(nil, false)
+    end
+
+    timers[name].OnTimer = onTimer
+    timers[name].Interval = interval
+
+    if hotkeys[name] then
+        hotkeys[name].Destroy()
+    end
+
+    hotkeys[name] =
+        createHotkey(
+        function()
+            timers[name].Enabled = not timers[name].Enabled
+            if timers[name].Enabled then
+                message(name .. " enabled.")
+            else
+                message(name .. " disabled.")
+            end
+        end,
+        hotkey
+    )
+
+    print(name .. " ready, hit F5 to toggle.")
 end
+
+--------------------------------
+
+reloadmodules()
+local aimbot = require("aimbot")
+
+createBotTimer(
+    "Trigger bot",
+    VK_F5,
+    10,
+    function()
+        local value = readBytes("isReticleRed")
+        if value == 1 then
+            mouse_event(MOUSEEVENTF_LEFTDOWN)
+            Sleep(10)
+            mouse_event(MOUSEEVENTF_LEFTUP)
+        end
+    end
+)
+createBotTimer("Aim bot", VK_F4, 5, aimbot.update)
+
+addEntity = aimbot.addEntity
 
 </LuaScript>
   <DisassemblerComments>
