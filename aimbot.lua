@@ -2,70 +2,33 @@ local vec = require("vector")
 
 local module = {reloadonrun = true}
 
-function pidController(params)
-    local errorIntegral = 0
-    local lastError = nil
-    return function(error)
-        local output = params.p * error + params.i * errorIntegral
-        errorIntegral = math.min(params.maxIntegral, (errorIntegral + error) * params.integralDecay)
-        if lastError ~= nil then
-            local diff = error - lastError
-            output = output + diff * params.d
-        end
-        lastError = error
-        return output
-    end
-end
-
-nextPidValue =
-    pidController(
-    {
-        p = 1,
-        i = 0.1,
-        d = 1,
-        integralDecay = 0.9,
-        maxIntegral = 5
-    }
-)
 function module.update()
     if not isKeyPressed(VK_SHIFT) then
         return
     end
-
-    local _UP = vec.new(0, 1, 0)
-    local forward = playerHeading()
-    local right = vec.cross(forward, _UP)
-    local up = vec.cross(right, forward)
-
     local desired = desiredHeading()
-    local xDot = vec.dot(right, desired)
-    local yDot = vec.dot(up, desired)
-
-    local error = math.acos(vec.dot(forward, desired))
-    local pid = nextPidValue(error)
-
-    local baseRate = baseMouseSpeed()
-    local rate = math.min(baseRate, baseRate * math.abs(pid))
-    local dx = -xDot
-    local dy = -yDot
-    local len = math.sqrt(dx * dx + dy * dy)
-    dx = dx * rate / len
-    dy = dy * rate / len
-    mouse_event(MOUSEEVENTF_MOVE, dx, dy)
+    -- print(vec.toString(desired))
+    local r = math.sqrt(desired.x * desired.x + desired.z * desired.z)
+    local yaw = math.atan2(desired.z, desired.x)
+    local pitch = math.atan2(desired.y, r)
+    -- print(yaw .. ", " .. pitch)
+    setAngles(yaw, pitch)
 end
 
-function baseMouseSpeed()
-    local playerPtr = readInteger("playerPtr")
-    local zoomState = readBytes(playerPtr + 0x320)
-    if zoomState == 0xFF then
-        return 100
-    end
-    if zoomState == 0x00 then
-        return 200
-    end
-    if zoomState == 0x01 then
-        return 600
-    end
+-- TAU = 2 * 3.14159
+-- HALFPI = 3.14159 * 0.5
+function setAngles(yaw, pitch)
+    -- if yaw < 0 then
+    --     yaw = yaw + TAU
+    -- end
+    -- if pitch < -HALFPI then
+    --     pitch = pitch + TAU
+    -- end
+    local anglesPtr = readInteger("anglesPtr")
+    local yawPtr = anglesPtr + 0x0C
+    local pitchPtr = anglesPtr + 0x10
+    writeFloat(yawPtr, yaw)
+    writeFloat(pitchPtr, pitch)
 end
 
 function playerHeading()
@@ -76,13 +39,13 @@ function desiredHeading()
     if bestEntity == nil then
         return vec.new(0, 1, 0)
     end
-    return vec.normalized(vecToEntity(bestEntity))
+    return vecToEntity(bestEntity)
 end
 
 function vecToEntity(address)
     local playerPos = vec.read(readInteger("playerPtr"), 0xA0)
     local targetPos = targetHeadPos(address)
-    return vec.sub(targetPos, playerPos)
+    return vec.normalized(vec.sub(targetPos, playerPos))
 end
 
 function targetHeadPos(address)
@@ -115,11 +78,7 @@ function entityScore(address)
     if health <= 0 then
         return 0
     end
-    local heading = playerHeading()
-    local offset = vecToEntity(address)
-    local len = math.sqrt(vec.lenSq(offset))
-    offset = vec.scale(offset, 1 / len)
-    return vec.dot(offset, heading)
+    return vec.dot(vecToEntity(address), playerHeading())
 end
 
 entityTypes = {}
@@ -145,7 +104,7 @@ function module.tickEntity(address)
     local oldScore = entityScore(bestEntity)
     if newScore > oldScore then
         bestEntity = address
-    -- print("Targeting " .. entityTypeString(address))
+        print("Targeting " .. entityTypeString(address))
     end
 end
 

@@ -511,6 +511,7 @@ dealloc(newmem)
         <CheatEntry>
           <ID>37</ID>
           <Description>"Track Player Angles"</Description>
+          <Options moHideChildren="1" moManualExpandCollapse="1"/>
           <LastState/>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>// Injection copy pointer to player angles.
@@ -574,6 +575,22 @@ dealloc(newmem)
 "halo.exe"+721E0: 8B 08                    -  mov ecx,[eax]
 }
 </AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>41</ID>
+              <Description>"yaw"</Description>
+              <LastState Value="3.067893744" RealAddress="402AD4B8"/>
+              <VariableType>Float</VariableType>
+              <Address>[anglesPtr]+0C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>42</ID>
+              <Description>"pitch"</Description>
+              <LastState Value="-0.02986869402" RealAddress="402AD4BC"/>
+              <VariableType>Float</VariableType>
+              <Address>[anglesPtr]+10</Address>
+            </CheatEntry>
+          </CheatEntries>
         </CheatEntry>
         <CheatEntry>
           <ID>8</ID>
@@ -644,7 +661,7 @@ dealloc(newmem)
             <CheatEntry>
               <ID>9</ID>
               <Description>"Address"</Description>
-              <LastState Value="400FEC10" RealAddress="008A0010"/>
+              <LastState Value="40102B04" RealAddress="009D0010"/>
               <ShowAsHex>1</ShowAsHex>
               <VariableType>4 Bytes</VariableType>
               <Address>playerPtr</Address>
@@ -652,58 +669,79 @@ dealloc(newmem)
             <CheatEntry>
               <ID>13</ID>
               <Description>"X"</Description>
-              <LastState Value="-10.89975643" RealAddress="400FEC6C"/>
+              <LastState Value="30.57820511" RealAddress="40102B60"/>
               <VariableType>Float</VariableType>
               <Address>[playerPtr]+5C</Address>
             </CheatEntry>
             <CheatEntry>
               <ID>14</ID>
               <Description>"Z"</Description>
-              <LastState Value="-36.59081268" RealAddress="400FEC70"/>
+              <LastState Value="-18.03708076" RealAddress="40102B64"/>
               <VariableType>Float</VariableType>
               <Address>[playerPtr]+60</Address>
             </CheatEntry>
             <CheatEntry>
               <ID>10</ID>
               <Description>"Y"</Description>
-              <LastState Value="89.73525238" RealAddress="400FEC74"/>
+              <LastState Value="89.16256714" RealAddress="40102B68"/>
               <VariableType>Float</VariableType>
               <Address>[playerPtr]+64</Address>
             </CheatEntry>
             <CheatEntry>
               <ID>11</ID>
               <Description>"Health"</Description>
-              <LastState Value="0.8857452869" RealAddress="400FECF0"/>
+              <LastState Value="1" RealAddress="40102BE4"/>
               <VariableType>Float</VariableType>
               <Address>[playerPtr]+E0</Address>
             </CheatEntry>
             <CheatEntry>
               <ID>12</ID>
               <Description>"Shields"</Description>
-              <LastState Value="1" RealAddress="400FECF4"/>
+              <LastState Value="1" RealAddress="40102BE8"/>
               <VariableType>Float</VariableType>
               <Address>[playerPtr]+E4</Address>
             </CheatEntry>
             <CheatEntry>
               <ID>15</ID>
               <Description>"Frags"</Description>
-              <LastState Value="3" RealAddress="400FEF2E"/>
+              <LastState Value="4" RealAddress="40102E22"/>
               <VariableType>Byte</VariableType>
               <Address>[playerPtr]+31E</Address>
             </CheatEntry>
             <CheatEntry>
               <ID>16</ID>
               <Description>"Plasmas"</Description>
-              <LastState Value="2" RealAddress="400FEF2F"/>
+              <LastState Value="0" RealAddress="40102E23"/>
               <VariableType>Byte</VariableType>
               <Address>[playerPtr]+31F</Address>
             </CheatEntry>
             <CheatEntry>
               <ID>17</ID>
               <Description>"Is In Air"</Description>
-              <LastState Value="0" RealAddress="400FF0DC"/>
+              <LastState Value="0" RealAddress="40102FD0"/>
               <VariableType>Byte</VariableType>
               <Address>[playerPtr]+4CC</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>38</ID>
+              <Description>"Heading X"</Description>
+              <LastState Value="-0.9969043732" RealAddress="40102D34"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+230</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>39</ID>
+              <Description>"Heading Z"</Description>
+              <LastState Value="0.07273115218" RealAddress="40102D38"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+234</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>40</ID>
+              <Description>"Heading Y"</Description>
+              <LastState Value="-0.02986425348" RealAddress="40102D3C"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+238</Address>
             </CheatEntry>
           </CheatEntries>
         </CheatEntry>
@@ -783,7 +821,7 @@ dealloc(newmem)
             <CheatEntry>
               <ID>24</ID>
               <Description>"isReticleRed"</Description>
-              <LastState Value="3212836864" RealAddress="0A660020"/>
+              <LastState Value="0" RealAddress="009D0020"/>
               <VariableType>4 Bytes</VariableType>
               <Address>isReticleRed</Address>
             </CheatEntry>
@@ -1314,7 +1352,7 @@ dealloc(newmem)
         <Byte>00</Byte>
       </After>
     </CodeEntry>
-    <CodeEntry Color="80000008">
+    <CodeEntry Color="20000000">
       <Description>readYaw</Description>
       <AddressString>halo.exe+721B3</AddressString>
       <Before>
@@ -1341,7 +1379,7 @@ dealloc(newmem)
   <UserdefinedSymbols>
     <SymbolEntry>
       <Name>playerPtr</Name>
-      <Address>008A0010</Address>
+      <Address>009D0010</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>isReticleRedPtr</Name>
@@ -1349,11 +1387,11 @@ dealloc(newmem)
     </SymbolEntry>
     <SymbolEntry>
       <Name>isReticleRed</Name>
-      <Address>0A660020</Address>
+      <Address>009D0020</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>functionString</Name>
-      <Address>0B0F0020</Address>
+      <Address>009D0030</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>playerYawPtr</Name>
@@ -1361,7 +1399,7 @@ dealloc(newmem)
     </SymbolEntry>
     <SymbolEntry>
       <Name>anglesPtr</Name>
-      <Address>008A0000</Address>
+      <Address>009D0000</Address>
     </SymbolEntry>
   </UserdefinedSymbols>
   <Structures StructVersion="2">
