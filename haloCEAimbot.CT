@@ -478,9 +478,33 @@ dealloc(newmem)
       </CheatEntries>
     </CheatEntry>
     <CheatEntry>
+      <ID>33</ID>
+      <Description>"Static Addresses"</Description>
+      <Options moManualExpandCollapse="1"/>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <Address/>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>31</ID>
+          <Description>"IsRunning"</Description>
+          <LastState Value="0" RealAddress="00686A98"/>
+          <VariableType>Byte</VariableType>
+          <Address>halo.exe+286A98</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32</ID>
+          <Description>"ZeroOnDefocus"</Description>
+          <LastState Value="0" RealAddress="0008CA98"/>
+          <VariableType>4 Bytes</VariableType>
+          <Address>0008CA98</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
       <ID>30</ID>
       <Description>"Bot Hacks"</Description>
-      <Options moActivateChildrenAsWell="1" moDeactivateChildrenAsWell="1"/>
+      <Options moAlwaysHideChildren="1" moActivateChildrenAsWell="1" moDeactivateChildrenAsWell="1"/>
       <LastState Value="" Activated="1" RealAddress="00000000"/>
       <GroupHeader>1</GroupHeader>
       <CheatEntries>
@@ -560,7 +584,7 @@ dealloc(newmem)
             <CheatEntry>
               <ID>9</ID>
               <Description>"Address"</Description>
-              <LastState Value="40102B04" RealAddress="00C60110"/>
+              <LastState Value="40102B04" RealAddress="008C0000"/>
               <ShowAsHex>1</ShowAsHex>
               <VariableType>4 Bytes</VariableType>
               <Address>playerPtr</Address>
@@ -568,21 +592,21 @@ dealloc(newmem)
             <CheatEntry>
               <ID>13</ID>
               <Description>"X"</Description>
-              <LastState Value="11.13697433" RealAddress="40102B60"/>
+              <LastState Value="7.361770153" RealAddress="40102B60"/>
               <VariableType>Float</VariableType>
               <Address>[playerPtr]+5C</Address>
             </CheatEntry>
             <CheatEntry>
               <ID>14</ID>
               <Description>"Z"</Description>
-              <LastState Value="-19.15699768" RealAddress="40102B64"/>
+              <LastState Value="-35.30754089" RealAddress="40102B64"/>
               <VariableType>Float</VariableType>
               <Address>[playerPtr]+60</Address>
             </CheatEntry>
             <CheatEntry>
               <ID>10</ID>
               <Description>"Y"</Description>
-              <LastState Value="87.51383972" RealAddress="40102B68"/>
+              <LastState Value="87.56557465" RealAddress="40102B68"/>
               <VariableType>Float</VariableType>
               <Address>[playerPtr]+64</Address>
             </CheatEntry>
@@ -699,7 +723,7 @@ dealloc(newmem)
             <CheatEntry>
               <ID>24</ID>
               <Description>"isReticleRed"</Description>
-              <LastState Value="0" RealAddress="00C60100"/>
+              <LastState Value="0" RealAddress="008C0010"/>
               <VariableType>4 Bytes</VariableType>
               <Address>isReticleRed</Address>
             </CheatEntry>
@@ -1211,7 +1235,7 @@ dealloc(newmem)
   <UserdefinedSymbols>
     <SymbolEntry>
       <Name>playerPtr</Name>
-      <Address>00C60110</Address>
+      <Address>008C0000</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>isReticleRedPtr</Name>
@@ -1219,11 +1243,11 @@ dealloc(newmem)
     </SymbolEntry>
     <SymbolEntry>
       <Name>isReticleRed</Name>
-      <Address>00C60100</Address>
+      <Address>008C0010</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>functionString</Name>
-      <Address>00C60000</Address>
+      <Address>008C0020</Address>
     </SymbolEntry>
   </UserdefinedSymbols>
   <Structures StructVersion="2">
@@ -1972,7 +1996,8 @@ dealloc(newmem)
       </Elements>
     </Structure>
   </Structures>
-  <LuaScript>dofile("main.lua")
+  <LuaScript>if onExit ~= nil then onExit() end
+onExit = dofile("main.lua")
 </LuaScript>
   <DisassemblerComments>
     <DisassemblerComment>

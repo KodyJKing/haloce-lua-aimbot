@@ -11,20 +11,22 @@ function message(msg)
     speak(msg)
 end
 
+function gameRunningAndFocused()
+    local running = readBytes("halo.exe+286A98") == 1
+    local focused = readInteger(0x0008CA98) ~= 0
+    return running and focused
+end
+
 timers = {}
 hotkeys = {}
 function createBotTimer(name, hotkey, interval, onTimer)
-    if timers[name] == nil then
-        timers[name] = createTimer(nil, false)
+    timers[name] = createTimer(nil, false)
+    timers[name].OnTimer = function()
+        if gameRunningAndFocused() then
+            onTimer()
+        end
     end
-
-    timers[name].OnTimer = onTimer
     timers[name].Interval = interval
-
-    if hotkeys[name] then
-        hotkeys[name].Destroy()
-    end
-
     hotkeys[name] =
         createHotkey(
         function()
@@ -37,8 +39,16 @@ function createBotTimer(name, hotkey, interval, onTimer)
         end,
         hotkey
     )
-
     print(name .. " ready, hit F5 to toggle.")
+end
+
+function onExit()
+    for k, v in pairs(timers) do
+        v.Destroy()
+    end
+    for k, v in pairs(hotkeys) do
+        v.Destroy()
+    end
 end
 
 --------------------------------
@@ -62,3 +72,5 @@ createBotTimer(
 createBotTimer("Aim bot", VK_F4, 5, aimbot.update)
 
 addEntity = aimbot.addEntity
+
+return onExit
