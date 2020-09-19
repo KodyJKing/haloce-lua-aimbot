@@ -505,14 +505,14 @@ dealloc(newmem)
       <ID>30</ID>
       <Description>"Bot Hacks"</Description>
       <Options moAlwaysHideChildren="1" moActivateChildrenAsWell="1" moDeactivateChildrenAsWell="1"/>
-      <LastState Value="" Activated="1" RealAddress="00000000"/>
+      <LastState Value="" RealAddress="00000000"/>
       <GroupHeader>1</GroupHeader>
       <CheatEntries>
         <CheatEntry>
           <ID>8</ID>
           <Description>"Track Player (InjCopy playerPtr)"</Description>
           <Options moHideChildren="1" moManualExpandCollapse="1"/>
-          <LastState Activated="1"/>
+          <LastState/>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>{ Game   : halo.exe
   Version: 
@@ -584,7 +584,7 @@ dealloc(newmem)
             <CheatEntry>
               <ID>9</ID>
               <Description>"Address"</Description>
-              <LastState Value="40102B04" RealAddress="008C0000"/>
+              <LastState Value="40102B04" RealAddress="008D0000"/>
               <ShowAsHex>1</ShowAsHex>
               <VariableType>4 Bytes</VariableType>
               <Address>playerPtr</Address>
@@ -592,21 +592,21 @@ dealloc(newmem)
             <CheatEntry>
               <ID>13</ID>
               <Description>"X"</Description>
-              <LastState Value="7.361770153" RealAddress="40102B60"/>
+              <LastState Value="30.8281765" RealAddress="40102B60"/>
               <VariableType>Float</VariableType>
               <Address>[playerPtr]+5C</Address>
             </CheatEntry>
             <CheatEntry>
               <ID>14</ID>
               <Description>"Z"</Description>
-              <LastState Value="-35.30754089" RealAddress="40102B64"/>
+              <LastState Value="-32.98002625" RealAddress="40102B64"/>
               <VariableType>Float</VariableType>
               <Address>[playerPtr]+60</Address>
             </CheatEntry>
             <CheatEntry>
               <ID>10</ID>
               <Description>"Y"</Description>
-              <LastState Value="87.56557465" RealAddress="40102B68"/>
+              <LastState Value="87.29401398" RealAddress="40102B68"/>
               <VariableType>Float</VariableType>
               <Address>[playerPtr]+64</Address>
             </CheatEntry>
@@ -651,7 +651,7 @@ dealloc(newmem)
           <ID>23</ID>
           <Description>"InjCopy isReticleRed"</Description>
           <Options moHideChildren="1" moManualExpandCollapse="1"/>
-          <LastState Activated="1"/>
+          <LastState/>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>{
   This script injection copies isReticleRed.
@@ -723,7 +723,7 @@ dealloc(newmem)
             <CheatEntry>
               <ID>24</ID>
               <Description>"isReticleRed"</Description>
-              <LastState Value="0" RealAddress="008C0010"/>
+              <LastState Value="0" RealAddress="008D0010"/>
               <VariableType>4 Bytes</VariableType>
               <Address>isReticleRed</Address>
             </CheatEntry>
@@ -732,7 +732,7 @@ dealloc(newmem)
         <CheatEntry>
           <ID>28</ID>
           <Description>"Track Entities"</Description>
-          <LastState Activated="1"/>
+          <LastState/>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>{
     This script hooks read a line that reads entity health and
@@ -1235,7 +1235,7 @@ dealloc(newmem)
   <UserdefinedSymbols>
     <SymbolEntry>
       <Name>playerPtr</Name>
-      <Address>008C0000</Address>
+      <Address>008D0000</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>isReticleRedPtr</Name>
@@ -1243,11 +1243,11 @@ dealloc(newmem)
     </SymbolEntry>
     <SymbolEntry>
       <Name>isReticleRed</Name>
-      <Address>008C0010</Address>
+      <Address>008D0010</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>functionString</Name>
-      <Address>008C0020</Address>
+      <Address>008D0020</Address>
     </SymbolEntry>
   </UserdefinedSymbols>
   <Structures StructVersion="2">
@@ -1996,8 +1996,8 @@ dealloc(newmem)
       </Elements>
     </Structure>
   </Structures>
-  <LuaScript>if onExit ~= nil then onExit() end
-onExit = dofile("main.lua")
+  <LuaScript>if onReload ~= nil then onReload() end
+onReload = dofile("main.lua")
 </LuaScript>
   <DisassemblerComments>
     <DisassemblerComment>

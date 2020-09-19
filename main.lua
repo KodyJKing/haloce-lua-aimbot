@@ -42,7 +42,7 @@ function createBotTimer(name, hotkey, interval, onTimer)
     print(name .. " ready, hit F5 to toggle.")
 end
 
-function onExit()
+function onReload()
     for k, v in pairs(timers) do
         v.Destroy()
     end
@@ -73,4 +73,4 @@ createBotTimer("Aim bot", VK_F4, 5, aimbot.update)
 
 addEntity = aimbot.addEntity
 
-return onExit
+return onReload

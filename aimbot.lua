@@ -20,7 +20,6 @@ function module.update()
     local desired = desiredHeading()
     local xDot = vec.dot(right, desired)
     local yDot = vec.dot(up, desired)
-    --print(vString(forward) .. vString(right) .. vString(up))
 
     local err = math.acos(vec.dot(forward, desired))
 
@@ -61,17 +60,19 @@ function playerHeading()
 end
 
 function desiredHeading()
-    local adr = 0x40106C90
-    if bestEntity ~= nil then
-        adr = bestEntity
+    if bestEntity == nil then
+        return vec.new(0, 1, 0)
     end
-    return vec.normalized(vecToEntity(adr))
+    return vec.normalized(vecToEntity(bestEntity))
 end
 
 function vecToEntity(address)
     local playerPos = vec.read(readInteger("playerPtr"), 0xA0)
     local targetPos = vec.read(address, 0xA0)
     return vec.sub(targetPos, playerPos)
+end
+
+function entityHeadOffset(address)
 end
 
 bestEntity = nil
@@ -87,6 +88,21 @@ function entityScore(address)
     return vec.dot(offset, heading)
 end
 
+entityTypes = {}
+entityTypes[0xe6dd0569] = "player"
+entityTypes[0xe1ed0079] = "marine"
+entityTypes[0xe75d05e9] = "elite"
+entityTypes[0xea4208ce] = "grunt"
+entityTypes[0xeb810a0d] = "jackal1"
+entityTypes[0xeb2609b2] = "jackal2"
+function entityTypeString(address)
+    local type = readInteger(address)
+    if entityTypes[type] ~= nil then
+        return entityTypes[type]
+    end
+    return string.format("%x", type)
+end
+
 function module.addEntity(address)
     if bestEntity == nil then
         bestEntity = address
@@ -95,6 +111,7 @@ function module.addEntity(address)
     local oldScore = entityScore(bestEntity)
     if newScore > oldScore then
         bestEntity = address
+        print("Targeting " .. entityTypeString(address))
     end
 end
 
