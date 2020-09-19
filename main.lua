@@ -42,7 +42,6 @@ function createBotTimer(name, hotkey, interval, onTimer)
 end
 
 --------------------------------
---------------------------------
 
 reloadmodules()
 local aimbot = require("aimbot")

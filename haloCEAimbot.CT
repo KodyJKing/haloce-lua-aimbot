@@ -2,82 +2,18 @@
 <CheatTable CheatEngineTableVersion="31">
   <CheatEntries>
     <CheatEntry>
-      <ID>1</ID>
-      <Description>"Infinite Shield"</Description>
-      <LastState/>
-      <VariableType>Auto Assembler Script</VariableType>
-      <AssemblerScript>{ Game   : halo.exe
-  Version: 
-  Date   : 2019-05-05
-  Author : Kody
-
-  This script does blah blah blah
-}
-
-[ENABLE]
-
-aobscanmodule(INJECT,halo.exe,D8 9E E4 00 00 00 DF) // should be unique
-alloc(newmem,$1000)
-
-label(code)
-label(return)
-
-newmem:
-
-code:
-  mov [esi+000000E4],(float)100
-  fcomp dword ptr [esi+000000E4]
-  jmp return
-
-INJECT:
-  jmp newmem
-  nop
-return:
-registersymbol(INJECT)
-
-[DISABLE]
-
-INJECT:
-  db D8 9E E4 00 00 00
-
-unregistersymbol(INJECT)
-dealloc(newmem)
-
-{
-// ORIGINAL CODE - INJECTION POINT: "halo.exe"+AFFF3
-
-"halo.exe"+AFFD1: E8 3A 2C FB FF        -  call halo.exe+62C10
-"halo.exe"+AFFD6: 83 C4 04              -  add esp,04
-"halo.exe"+AFFD9: 84 C0                 -  test al,al
-"halo.exe"+AFFDB: 74 7C                 -  je halo.exe+B0059
-"halo.exe"+AFFDD: A1 2C 94 71 00        -  mov eax,[halo.exe+31942C]
-"halo.exe"+AFFE2: F6 40 58 04           -  test byte ptr [eax+58],04
-"halo.exe"+AFFE6: 75 71                 -  jne halo.exe+B0059
-"halo.exe"+AFFE8: D9 07                 -  fld dword ptr [edi]
-"halo.exe"+AFFEA: 33 D2                 -  xor edx,edx
-"halo.exe"+AFFEC: 66 8B 96 06 01 00 00  -  mov dx,[esi+00000106]
-// ---------- INJECTING HERE ----------
-"halo.exe"+AFFF3: D8 9E E4 00 00 00     -  fcomp dword ptr [esi+000000E4]
-// ---------- DONE INJECTING  ----------
-"halo.exe"+AFFF9: DF E0                 -  fnstsw ax
-"halo.exe"+AFFFB: C1 EA 0C              -  shr edx,0C
-"halo.exe"+AFFFE: 83 E2 01              -  and edx,01
-"halo.exe"+B0001: F6 C4 41              -  test ah,41
-"halo.exe"+B0004: 75 05                 -  jne halo.exe+B000B
-"halo.exe"+B0006: 83 CA 02              -  or edx,02
-"halo.exe"+B0009: EB 03                 -  jmp halo.exe+B000E
-"halo.exe"+B000B: 83 E2 FD              -  and edx,-03
-"halo.exe"+B000E: D9 86 E4 00 00 00     -  fld dword ptr [esi+000000E4]
-"halo.exe"+B0014: D8 1D 8C 2B 67 00     -  fcomp dword ptr [halo.exe+272B8C]
-}
-</AssemblerScript>
-    </CheatEntry>
-    <CheatEntry>
-      <ID>2</ID>
-      <Description>"Super Jump"</Description>
-      <LastState/>
-      <VariableType>Auto Assembler Script</VariableType>
-      <AssemblerScript>{ Game   : halo.exe
+      <ID>29</ID>
+      <Description>"Misc Hacks"</Description>
+      <Options moManualExpandCollapse="1"/>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>2</ID>
+          <Description>"Super Jump"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : halo.exe
   Version: 
   Date   : 2019-05-05
   Author : Kody
@@ -159,13 +95,84 @@ dealloc(newmem)
 "halo.exe"+15EEB1: E8 DA 16 00 00                 -  call halo.exe+160590
 }
 </AssemblerScript>
-    </CheatEntry>
-    <CheatEntry>
-      <ID>4</ID>
-      <Description>"Super Punch"</Description>
-      <LastState/>
-      <VariableType>Auto Assembler Script</VariableType>
-      <AssemblerScript>{ Game   : halo.exe
+        </CheatEntry>
+        <CheatEntry>
+          <ID>1</ID>
+          <Description>"Infinite Shield"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : halo.exe
+  Version: 
+  Date   : 2019-05-05
+  Author : Kody
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(INJECT,halo.exe,D8 9E E4 00 00 00 DF) // should be unique
+alloc(newmem,$1000)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [esi+000000E4],(float)100
+  fcomp dword ptr [esi+000000E4]
+  jmp return
+
+INJECT:
+  jmp newmem
+  nop
+return:
+registersymbol(INJECT)
+
+[DISABLE]
+
+INJECT:
+  db D8 9E E4 00 00 00
+
+unregistersymbol(INJECT)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: "halo.exe"+AFFF3
+
+"halo.exe"+AFFD1: E8 3A 2C FB FF        -  call halo.exe+62C10
+"halo.exe"+AFFD6: 83 C4 04              -  add esp,04
+"halo.exe"+AFFD9: 84 C0                 -  test al,al
+"halo.exe"+AFFDB: 74 7C                 -  je halo.exe+B0059
+"halo.exe"+AFFDD: A1 2C 94 71 00        -  mov eax,[halo.exe+31942C]
+"halo.exe"+AFFE2: F6 40 58 04           -  test byte ptr [eax+58],04
+"halo.exe"+AFFE6: 75 71                 -  jne halo.exe+B0059
+"halo.exe"+AFFE8: D9 07                 -  fld dword ptr [edi]
+"halo.exe"+AFFEA: 33 D2                 -  xor edx,edx
+"halo.exe"+AFFEC: 66 8B 96 06 01 00 00  -  mov dx,[esi+00000106]
+// ---------- INJECTING HERE ----------
+"halo.exe"+AFFF3: D8 9E E4 00 00 00     -  fcomp dword ptr [esi+000000E4]
+// ---------- DONE INJECTING  ----------
+"halo.exe"+AFFF9: DF E0                 -  fnstsw ax
+"halo.exe"+AFFFB: C1 EA 0C              -  shr edx,0C
+"halo.exe"+AFFFE: 83 E2 01              -  and edx,01
+"halo.exe"+B0001: F6 C4 41              -  test ah,41
+"halo.exe"+B0004: 75 05                 -  jne halo.exe+B000B
+"halo.exe"+B0006: 83 CA 02              -  or edx,02
+"halo.exe"+B0009: EB 03                 -  jmp halo.exe+B000E
+"halo.exe"+B000B: 83 E2 FD              -  and edx,-03
+"halo.exe"+B000E: D9 86 E4 00 00 00     -  fld dword ptr [esi+000000E4]
+"halo.exe"+B0014: D8 1D 8C 2B 67 00     -  fcomp dword ptr [halo.exe+272B8C]
+}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>4</ID>
+          <Description>"Super Punch"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : halo.exe
   Version: 
   Date   : 2019-05-06
   Author : Kody
@@ -277,13 +284,13 @@ dealloc(newmem)
 "halo.exe"+EF4CF: 8B CD                          -  mov ecx,ebp
 }
 </AssemblerScript>
-    </CheatEntry>
-    <CheatEntry>
-      <ID>5</ID>
-      <Description>"SuperFire"</Description>
-      <LastState/>
-      <VariableType>Auto Assembler Script</VariableType>
-      <AssemblerScript>{ Game   : halo.exe
+        </CheatEntry>
+        <CheatEntry>
+          <ID>5</ID>
+          <Description>"SuperFire"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : halo.exe
   Version: 
   Date   : 2019-06-22
   Author : Kody
@@ -377,13 +384,13 @@ dealloc(newmem)
 "halo.exe"+C3467: CC                       -  int 3 
 }
 </AssemblerScript>
-    </CheatEntry>
-    <CheatEntry>
-      <ID>6</ID>
-      <Description>"SuperFire2"</Description>
-      <LastState/>
-      <VariableType>Auto Assembler Script</VariableType>
-      <AssemblerScript>{ Game   : halo.exe
+        </CheatEntry>
+        <CheatEntry>
+          <ID>6</ID>
+          <Description>"SuperFire2"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : halo.exe
   Version: 
   Date   : 2019-06-22
   Author : Kody
@@ -467,14 +474,23 @@ dealloc(newmem)
 "halo.exe"+C3467: CC                       -  int 3 
 }
 </AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
     </CheatEntry>
     <CheatEntry>
-      <ID>8</ID>
-      <Description>"Track Player (InjCopy playerPtr)"</Description>
-      <Options moHideChildren="1" moManualExpandCollapse="1"/>
-      <LastState Activated="1"/>
-      <VariableType>Auto Assembler Script</VariableType>
-      <AssemblerScript>{ Game   : halo.exe
+      <ID>30</ID>
+      <Description>"Bot Hacks"</Description>
+      <Options moActivateChildrenAsWell="1" moDeactivateChildrenAsWell="1"/>
+      <LastState Value="" Activated="1" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>8</ID>
+          <Description>"Track Player (InjCopy playerPtr)"</Description>
+          <Options moHideChildren="1" moManualExpandCollapse="1"/>
+          <LastState Activated="1"/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : halo.exe
   Version: 
   Date   : 2020-09-15
   Author : Kody
@@ -540,81 +556,86 @@ dealloc(newmem)
 "halo.exe"+AFFB5: 84 C0                 -  test al,al
 }
 </AssemblerScript>
-      <CheatEntries>
-        <CheatEntry>
-          <ID>9</ID>
-          <Description>"Address"</Description>
-          <ShowAsHex>1</ShowAsHex>
-          <VariableType>4 Bytes</VariableType>
-          <Address>playerPtr</Address>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>9</ID>
+              <Description>"Address"</Description>
+              <LastState Value="40102B04" RealAddress="00C60110"/>
+              <ShowAsHex>1</ShowAsHex>
+              <VariableType>4 Bytes</VariableType>
+              <Address>playerPtr</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>13</ID>
+              <Description>"X"</Description>
+              <LastState Value="11.13697433" RealAddress="40102B60"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+5C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>14</ID>
+              <Description>"Z"</Description>
+              <LastState Value="-19.15699768" RealAddress="40102B64"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+60</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>10</ID>
+              <Description>"Y"</Description>
+              <LastState Value="87.51383972" RealAddress="40102B68"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+64</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>11</ID>
+              <Description>"Health"</Description>
+              <LastState Value="1" RealAddress="40102BE4"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+E0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>12</ID>
+              <Description>"Shields"</Description>
+              <LastState Value="1" RealAddress="40102BE8"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+E4</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>15</ID>
+              <Description>"Frags"</Description>
+              <LastState Value="4" RealAddress="40102E22"/>
+              <VariableType>Byte</VariableType>
+              <Address>[playerPtr]+31E</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>16</ID>
+              <Description>"Plasmas"</Description>
+              <LastState Value="0" RealAddress="40102E23"/>
+              <VariableType>Byte</VariableType>
+              <Address>[playerPtr]+31F</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>17</ID>
+              <Description>"Is In Air"</Description>
+              <LastState Value="0" RealAddress="40102FD0"/>
+              <VariableType>Byte</VariableType>
+              <Address>[playerPtr]+4CC</Address>
+            </CheatEntry>
+          </CheatEntries>
         </CheatEntry>
         <CheatEntry>
-          <ID>13</ID>
-          <Description>"X"</Description>
-          <VariableType>Float</VariableType>
-          <Address>[playerPtr]+5C</Address>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>14</ID>
-          <Description>"Z"</Description>
-          <VariableType>Float</VariableType>
-          <Address>[playerPtr]+60</Address>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>10</ID>
-          <Description>"Y"</Description>
-          <VariableType>Float</VariableType>
-          <Address>[playerPtr]+64</Address>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>11</ID>
-          <Description>"Health"</Description>
-          <VariableType>Float</VariableType>
-          <Address>[playerPtr]+E0</Address>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>12</ID>
-          <Description>"Shields"</Description>
-          <VariableType>Float</VariableType>
-          <Address>[playerPtr]+E4</Address>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>15</ID>
-          <Description>"Frags"</Description>
-          <VariableType>Byte</VariableType>
-          <Address>[playerPtr]+31E</Address>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>16</ID>
-          <Description>"Plasmas"</Description>
-          <VariableType>Byte</VariableType>
-          <Address>[playerPtr]+31F</Address>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>17</ID>
-          <Description>"Is In Air"</Description>
-          <VariableType>Byte</VariableType>
-          <Address>[playerPtr]+4CC</Address>
-        </CheatEntry>
-      </CheatEntries>
-    </CheatEntry>
-    <CheatEntry>
-      <ID>23</ID>
-      <Description>"InjCopy isReticleRed"</Description>
-      <Options moHideChildren="1" moManualExpandCollapse="1"/>
-      <LastState Activated="1"/>
-      <VariableType>Auto Assembler Script</VariableType>
-      <AssemblerScript>{ Game   : halo.exe
-  Version: 
-  Date   : 2020-09-15
-  Author : Kody
-
-  This script does blah blah blah
+          <ID>23</ID>
+          <Description>"InjCopy isReticleRed"</Description>
+          <Options moHideChildren="1" moManualExpandCollapse="1"/>
+          <LastState Activated="1"/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{
+  This script injection copies isReticleRed.
 }
 
 [ENABLE]
 
-aobscanmodule(INJECT,halo.exe,8B 02 33 DB 85 C0) // should be unique
+aobscanmodule(INJECT_readIsReticleRed,halo.exe,8B 02 33 DB 85 C0)
 alloc(newmem,$1000)
 globalalloc(isReticleRed, 1)
 
@@ -630,18 +651,18 @@ code:
   test eax,eax
   jmp return
 
-INJECT:
+INJECT_readIsReticleRed:
   jmp newmem
   nop
 return:
-registersymbol(INJECT)
+registersymbol(INJECT_readIsReticleRed)
 
 [DISABLE]
 
-INJECT:
+INJECT_readIsReticleRed:
   db 8B 02 33 DB 85 C0
 
-unregistersymbol(INJECT)
+unregistersymbol(INJECT_readIsReticleRed)
 dealloc(newmem)
 
 {
@@ -674,26 +695,24 @@ dealloc(newmem)
 "halo.exe"+B2FDB: E9 B8 01 00 00           -  jmp halo.exe+B3198
 }
 </AssemblerScript>
-      <CheatEntries>
-        <CheatEntry>
-          <ID>24</ID>
-          <Description>"isReticleRed"</Description>
-          <VariableType>4 Bytes</VariableType>
-          <Address>isReticleRed</Address>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>24</ID>
+              <Description>"isReticleRed"</Description>
+              <LastState Value="0" RealAddress="00C60100"/>
+              <VariableType>4 Bytes</VariableType>
+              <Address>isReticleRed</Address>
+            </CheatEntry>
+          </CheatEntries>
         </CheatEntry>
-      </CheatEntries>
-    </CheatEntry>
-    <CheatEntry>
-      <ID>28</ID>
-      <Description>"Track Entities"</Description>
-      <LastState Activated="1"/>
-      <VariableType>Auto Assembler Script</VariableType>
-      <AssemblerScript>{ Game   : halo.exe
-  Version: 
-  Date   : 2020-09-15
-  Author : Kody
-
-  This script does blah blah blah
+        <CheatEntry>
+          <ID>28</ID>
+          <Description>"Track Entities"</Description>
+          <LastState Activated="1"/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{
+    This script hooks read a line that reads entity health and
+    uses it to tell the bot to update the entity.
 }
 
 loadlibrary(luaclient-i386.dll)
@@ -708,7 +727,7 @@ db 'addEntity(parameter)',0
 
 [ENABLE]
 
-aobscanmodule(INJECT,halo.exe,8B 8D E0 00 00 00 89) // should be unique
+aobscanmodule(INJECT_readHealth,halo.exe,8B 8D E0 00 00 00 89)
 alloc(newmem,$1000)
 
 label(code)
@@ -727,18 +746,18 @@ code:
   mov ecx,[ebp+000000E0]
   jmp return
 
-INJECT:
+INJECT_readHealth:
   jmp newmem
   nop
 return:
-registersymbol(INJECT)
+registersymbol(INJECT_readHealth)
 
 [DISABLE]
 
-INJECT:
+INJECT_readHealth:
   db 8B 8D E0 00 00 00
 
-unregistersymbol(INJECT)
+unregistersymbol(INJECT_readHealth)
 dealloc(newmem)
 
 {
@@ -769,6 +788,8 @@ dealloc(newmem)
 "halo.exe"+29ED4: 5E                       -  pop esi
 }
 </AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
     </CheatEntry>
   </CheatEntries>
   <CheatCodes>
@@ -1190,7 +1211,7 @@ dealloc(newmem)
   <UserdefinedSymbols>
     <SymbolEntry>
       <Name>playerPtr</Name>
-      <Address>009A0110</Address>
+      <Address>00C60110</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>isReticleRedPtr</Name>
@@ -1198,11 +1219,11 @@ dealloc(newmem)
     </SymbolEntry>
     <SymbolEntry>
       <Name>isReticleRed</Name>
-      <Address>009A0100</Address>
+      <Address>00C60100</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>functionString</Name>
-      <Address>009A0000</Address>
+      <Address>00C60000</Address>
     </SymbolEntry>
   </UserdefinedSymbols>
   <Structures StructVersion="2">
@@ -1951,71 +1972,7 @@ dealloc(newmem)
       </Elements>
     </Structure>
   </Structures>
-  <LuaScript>function reloadmodules()
-    for k, v in pairs(package.loaded) do
-        if type(v) == "table" and v.reloadonrun == true then
-            package.loaded[k] = nil
-        end
-    end
-end
-
-function message(msg)
-    print(msg)
-    speak(msg)
-end
-
-timers = {}
-hotkeys = {}
-function createBotTimer(name, hotkey, interval, onTimer)
-    if timers[name] == nil then
-        timers[name] = createTimer(nil, false)
-    end
-
-    timers[name].OnTimer = onTimer
-    timers[name].Interval = interval
-
-    if hotkeys[name] then
-        hotkeys[name].Destroy()
-    end
-
-    hotkeys[name] =
-        createHotkey(
-        function()
-            timers[name].Enabled = not timers[name].Enabled
-            if timers[name].Enabled then
-                message(name .. " enabled.")
-            else
-                message(name .. " disabled.")
-            end
-        end,
-        hotkey
-    )
-
-    print(name .. " ready, hit F5 to toggle.")
-end
-
---------------------------------
-
-reloadmodules()
-local aimbot = require("aimbot")
-
-createBotTimer(
-    "Trigger bot",
-    VK_F5,
-    10,
-    function()
-        local value = readBytes("isReticleRed")
-        if value == 1 then
-            mouse_event(MOUSEEVENTF_LEFTDOWN)
-            Sleep(10)
-            mouse_event(MOUSEEVENTF_LEFTUP)
-        end
-    end
-)
-createBotTimer("Aim bot", VK_F4, 5, aimbot.update)
-
-addEntity = aimbot.addEntity
-
+  <LuaScript>dofile("main.lua")
 </LuaScript>
   <DisassemblerComments>
     <DisassemblerComment>
