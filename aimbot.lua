@@ -56,14 +56,14 @@ function entityHeadOffset(address)
     local type = entityTypeString(address)
     local offsets = {
         marine = {0.05, 0},
-        grunt = {0.17, -0.1},
+        grunt = {0.05, -0.1},
         jackal1 = {0.05, -0.05},
         jackal2 = {0.05, -0.05},
-        elite = {0.1, 0.05}
+        elite = {0.15, 0.04}
     }
     local offset = offsets[type] or {0, 0}
     local fwd, up = unpack(offset)
-    local result = vec.read(address, 0x230)
+    local result = vec.read(address, 0x224)
     result.x = result.x * fwd
     result.y = result.y * fwd + up
     result.z = result.z * fwd
