@@ -99,7 +99,7 @@ dealloc(newmem)
         <CheatEntry>
           <ID>1</ID>
           <Description>"Infinite Shield"</Description>
-          <LastState Activated="1"/>
+          <LastState/>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>{ Game   : halo.exe
   Version: 
@@ -475,399 +475,9 @@ dealloc(newmem)
 }
 </AssemblerScript>
         </CheatEntry>
-      </CheatEntries>
-    </CheatEntry>
-    <CheatEntry>
-      <ID>33</ID>
-      <Description>"Static Addresses"</Description>
-      <Options moManualExpandCollapse="1"/>
-      <LastState Value="" RealAddress="00000000"/>
-      <GroupHeader>1</GroupHeader>
-      <Address/>
-      <CheatEntries>
-        <CheatEntry>
-          <ID>31</ID>
-          <Description>"IsRunning"</Description>
-          <LastState Value="0" RealAddress="00686A98"/>
-          <VariableType>Byte</VariableType>
-          <Address>halo.exe+286A98</Address>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>32</ID>
-          <Description>"ZeroOnDefocus"</Description>
-          <LastState Value="0" RealAddress="0008CA98"/>
-          <VariableType>4 Bytes</VariableType>
-          <Address>0008CA98</Address>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>43</ID>
-          <Description>"mysteryReticleStructurePointer"</Description>
-          <LastState Value="400002E8" RealAddress="006F1D6C"/>
-          <ShowAsHex>1</ShowAsHex>
-          <VariableType>4 Bytes</VariableType>
-          <Address>halo.exe+2F1D6C</Address>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>44</ID>
-          <Description>"headingCopyX"</Description>
-          <LastState Value="-0.7838443518" RealAddress="40102D34"/>
-          <VariableType>Float</VariableType>
-          <Address>40102D34</Address>
-          <CheatEntries>
-            <CheatEntry>
-              <ID>45</ID>
-              <Description>"headingCopyY"</Description>
-              <LastState Value="0.6182636619" RealAddress="40102D38"/>
-              <VariableType>Float</VariableType>
-              <Address>+4</Address>
-              <CheatEntries>
-                <CheatEntry>
-                  <ID>46</ID>
-                  <Description>"headingCopyZ"</Description>
-                  <LastState Value="-0.05777594075" RealAddress="40102D3C"/>
-                  <VariableType>Float</VariableType>
-                  <Address>+4</Address>
-                </CheatEntry>
-              </CheatEntries>
-            </CheatEntry>
-          </CheatEntries>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>47</ID>
-          <Description>"headingCopyX2"</Description>
-          <LastState Value="-0.7838443518" RealAddress="40102D40"/>
-          <VariableType>Float</VariableType>
-          <Address>40102D40</Address>
-        </CheatEntry>
-      </CheatEntries>
-    </CheatEntry>
-    <CheatEntry>
-      <ID>30</ID>
-      <Description>"Bot Hacks"</Description>
-      <Options moManualExpandCollapse="1" moActivateChildrenAsWell="1" moDeactivateChildrenAsWell="1"/>
-      <LastState Value="" RealAddress="00000000"/>
-      <GroupHeader>1</GroupHeader>
-      <CheatEntries>
-        <CheatEntry>
-          <ID>37</ID>
-          <Description>"Track Player Angles"</Description>
-          <Options moHideChildren="1" moManualExpandCollapse="1"/>
-          <LastState/>
-          <VariableType>Auto Assembler Script</VariableType>
-          <AssemblerScript>// Injection copy pointer to player angles.
-[ENABLE]
-
-aobscanmodule(INJECT_readYaw,halo.exe,D8 47 0C 8B 5C 24 30)
-alloc(newmem,$1000)
-globalalloc(anglesPtr, 4)
-
-label(code)
-label(return)
-
-newmem:
-
-code:
-  mov [anglesPtr], edi
-  fadd dword ptr [edi+0C]
-  mov ebx,[esp+30]
-  jmp return
-
-INJECT_readYaw:
-  jmp newmem
-  nop 2
-return:
-registersymbol(INJECT_readYaw)
-
-[DISABLE]
-
-INJECT_readYaw:
-  db D8 47 0C 8B 5C 24 30
-
-unregistersymbol(INJECT_readYaw)
-dealloc(newmem)
-
-{
-// ORIGINAL CODE - INJECTION POINT: "halo.exe"+721B3
-
-"halo.exe"+7217A: 8B 0D A0 6F 74 00        -  mov ecx,[halo.exe+346FA0]
-"halo.exe"+72180: 8B 91 14 01 00 00        -  mov edx,[ecx+00000114]
-"halo.exe"+72186: 8D 74 24 30              -  lea esi,[esp+30]
-"halo.exe"+7218A: 89 54 24 2C              -  mov [esp+2C],edx
-"halo.exe"+7218E: C7 44 24 18 43 02 BF BF  -  mov [esp+18],BFBF0243
-"halo.exe"+72196: C7 44 24 1C 43 02 BF 3F  -  mov [esp+1C],3FBF0243
-"halo.exe"+7219E: E8 7D FE FF FF           -  call halo.exe+72020
-"halo.exe"+721A3: 66 8B 6C 24 34           -  mov bp,[esp+34]
-"halo.exe"+721A8: 66 83 FD FF              -  cmp bp,-01
-"halo.exe"+721AC: D9 84 24 B8 00 00 00     -  fld dword ptr [esp+000000B8]
-// ---------- INJECTING HERE ----------
-"halo.exe"+721B3: D8 47 0C                 -  fadd dword ptr [edi+0C]
-"halo.exe"+721B6: 8B 5C 24 30              -  mov ebx,[esp+30]
-// ---------- DONE INJECTING  ----------
-"halo.exe"+721BA: D9 5F 0C                 -  fstp dword ptr [edi+0C]
-"halo.exe"+721BD: 0F 84 DB 01 00 00        -  je halo.exe+7239E
-"halo.exe"+721C3: 8B 0D B0 03 86 00        -  mov ecx,[halo.exe+4603B0]
-"halo.exe"+721C9: D9 05 C0 2A 67 00        -  fld dword ptr [halo.exe+272AC0]
-"halo.exe"+721CF: 8B 51 34                 -  mov edx,[ecx+34]
-"halo.exe"+721D2: 8B C3                    -  mov eax,ebx
-"halo.exe"+721D4: 25 FF FF 00 00           -  and eax,0000FFFF
-"halo.exe"+721D9: 8D 04 40                 -  lea eax,[eax+eax*2]
-"halo.exe"+721DC: 8B 44 82 08              -  mov eax,[edx+eax*4+08]
-"halo.exe"+721E0: 8B 08                    -  mov ecx,[eax]
-}
-</AssemblerScript>
-          <CheatEntries>
-            <CheatEntry>
-              <ID>41</ID>
-              <Description>"yaw"</Description>
-              <VariableType>Float</VariableType>
-              <Address>[anglesPtr]+0C</Address>
-            </CheatEntry>
-            <CheatEntry>
-              <ID>42</ID>
-              <Description>"pitch"</Description>
-              <VariableType>Float</VariableType>
-              <Address>[anglesPtr]+10</Address>
-            </CheatEntry>
-          </CheatEntries>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>8</ID>
-          <Description>"Track Player (InjCopy playerPtr)"</Description>
-          <Options moHideChildren="1" moManualExpandCollapse="1"/>
-          <LastState Activated="1"/>
-          <VariableType>Auto Assembler Script</VariableType>
-          <AssemblerScript>// Injection copy player pointer.
-[ENABLE]
-
-aobscanmodule(INJECT_readPlayerHealth,halo.exe,01 00 00 D9 86 E0 00 00 00)
-alloc(newmem,$1000)
-globalalloc(playerPtr, 4)
-
-label(code)
-label(return)
-
-newmem:
-
-code:
-  mov [playerPtr], esi
-  fld dword ptr [esi+000000E0]
-  jmp return
-
-INJECT_readPlayerHealth+03:
-  jmp newmem
-  nop
-return:
-registersymbol(INJECT_readPlayerHealth)
-
-[DISABLE]
-
-INJECT_readPlayerHealth+03:
-  db D9 86 E0 00 00 00
-
-unregistersymbol(INJECT_readPlayerHealth)
-dealloc(newmem)
-
-{
-// ORIGINAL CODE - INJECTION POINT: "halo.exe"+AFF89
-
-"halo.exe"+AFF63: 8B 44 02 0C           -  mov eax,[edx+eax+0C]
-"halo.exe"+AFF67: 83 F8 FF              -  cmp eax,-01
-"halo.exe"+AFF6A: 0F 84 98 01 00 00     -  je halo.exe+B0108
-"halo.exe"+AFF70: 25 FF FF 00 00        -  and eax,0000FFFF
-"halo.exe"+AFF75: C1 E0 05              -  shl eax,05
-"halo.exe"+AFF78: 8B 6C 28 14           -  mov ebp,[eax+ebp+14]
-"halo.exe"+AFF7C: 8A 46 10              -  mov al,[esi+10]
-"halo.exe"+AFF7F: 33 D2                 -  xor edx,edx
-"halo.exe"+AFF81: A8 04                 -  test al,04
-"halo.exe"+AFF83: 0F 85 60 01 00 00     -  jne halo.exe+B00E9
-// ---------- INJECTING HERE ----------
-"halo.exe"+AFF89: D9 86 E0 00 00 00     -  fld dword ptr [esi+000000E0]
-// ---------- DONE INJECTING  ----------
-"halo.exe"+AFF8F: D8 1D C0 2A 67 00     -  fcomp dword ptr [halo.exe+272AC0]
-"halo.exe"+AFF95: DF E0                 -  fnstsw ax
-"halo.exe"+AFF97: F6 C4 41              -  test ah,41
-"halo.exe"+AFF9A: 0F 85 49 01 00 00     -  jne halo.exe+B00E9
-"halo.exe"+AFFA0: 8A 44 24 14           -  mov al,[esp+14]
-"halo.exe"+AFFA4: 84 C0                 -  test al,al
-"halo.exe"+AFFA6: 0F 84 44 01 00 00     -  je halo.exe+B00F0
-"halo.exe"+AFFAC: 8B 0D 7C 18 6F 00     -  mov ecx,[halo.exe+2F187C]
-"halo.exe"+AFFB2: 8A 41 09              -  mov al,[ecx+09]
-"halo.exe"+AFFB5: 84 C0                 -  test al,al
-}
-</AssemblerScript>
-          <CheatEntries>
-            <CheatEntry>
-              <ID>9</ID>
-              <Description>"Address"</Description>
-              <LastState Value="40102B04" RealAddress="03840000"/>
-              <ShowAsHex>1</ShowAsHex>
-              <VariableType>4 Bytes</VariableType>
-              <Address>playerPtr</Address>
-            </CheatEntry>
-            <CheatEntry>
-              <ID>13</ID>
-              <Description>"X"</Description>
-              <LastState Value="26.97834396" RealAddress="40102B60"/>
-              <VariableType>Float</VariableType>
-              <Address>[playerPtr]+5C</Address>
-            </CheatEntry>
-            <CheatEntry>
-              <ID>14</ID>
-              <Description>"Z"</Description>
-              <LastState Value="-25.00505257" RealAddress="40102B64"/>
-              <VariableType>Float</VariableType>
-              <Address>[playerPtr]+60</Address>
-            </CheatEntry>
-            <CheatEntry>
-              <ID>10</ID>
-              <Description>"Y"</Description>
-              <LastState Value="88.40409851" RealAddress="40102B68"/>
-              <VariableType>Float</VariableType>
-              <Address>[playerPtr]+64</Address>
-            </CheatEntry>
-            <CheatEntry>
-              <ID>11</ID>
-              <Description>"Health"</Description>
-              <LastState Value="0.857786119" RealAddress="40102BE4"/>
-              <VariableType>Float</VariableType>
-              <Address>[playerPtr]+E0</Address>
-            </CheatEntry>
-            <CheatEntry>
-              <ID>12</ID>
-              <Description>"Shields"</Description>
-              <LastState Value="100" RealAddress="40102BE8"/>
-              <VariableType>Float</VariableType>
-              <Address>[playerPtr]+E4</Address>
-            </CheatEntry>
-            <CheatEntry>
-              <ID>15</ID>
-              <Description>"Frags"</Description>
-              <LastState Value="4" RealAddress="40102E22"/>
-              <VariableType>Byte</VariableType>
-              <Address>[playerPtr]+31E</Address>
-            </CheatEntry>
-            <CheatEntry>
-              <ID>16</ID>
-              <Description>"Plasmas"</Description>
-              <LastState Value="0" RealAddress="40102E23"/>
-              <VariableType>Byte</VariableType>
-              <Address>[playerPtr]+31F</Address>
-            </CheatEntry>
-            <CheatEntry>
-              <ID>17</ID>
-              <Description>"Is In Air"</Description>
-              <LastState Value="0" RealAddress="40102FD0"/>
-              <VariableType>Byte</VariableType>
-              <Address>[playerPtr]+4CC</Address>
-            </CheatEntry>
-            <CheatEntry>
-              <ID>38</ID>
-              <Description>"Heading X"</Description>
-              <LastState Value="-0.7838443518" RealAddress="40102D34"/>
-              <VariableType>Float</VariableType>
-              <Address>[playerPtr]+230</Address>
-            </CheatEntry>
-            <CheatEntry>
-              <ID>39</ID>
-              <Description>"Heading Z"</Description>
-              <LastState Value="0.6182636619" RealAddress="40102D38"/>
-              <VariableType>Float</VariableType>
-              <Address>[playerPtr]+234</Address>
-            </CheatEntry>
-            <CheatEntry>
-              <ID>40</ID>
-              <Description>"Heading Y"</Description>
-              <LastState Value="-0.05777594075" RealAddress="40102D3C"/>
-              <VariableType>Float</VariableType>
-              <Address>[playerPtr]+238</Address>
-            </CheatEntry>
-          </CheatEntries>
-        </CheatEntry>
-        <CheatEntry>
-          <ID>23</ID>
-          <Description>"InjCopy isReticleRed"</Description>
-          <Options moHideChildren="1" moManualExpandCollapse="1"/>
-          <LastState/>
-          <VariableType>Auto Assembler Script</VariableType>
-          <AssemblerScript>{
-  This script injection copies isReticleRed.
-}
-
-[ENABLE]
-
-aobscanmodule(INJECT_readIsReticleRed,halo.exe,8B 02 33 DB 85 C0)
-alloc(newmem,$1000)
-globalalloc(isReticleRed, 1)
-
-label(code)
-label(return)
-
-newmem:
-
-code:
-  mov eax,[edx]
-  mov [isReticleRed], eax
-  xor ebx,ebx
-  test eax,eax
-  jmp return
-
-INJECT_readIsReticleRed:
-  jmp newmem
-  nop
-return:
-registersymbol(INJECT_readIsReticleRed)
-
-[DISABLE]
-
-INJECT_readIsReticleRed:
-  db 8B 02 33 DB 85 C0
-
-unregistersymbol(INJECT_readIsReticleRed)
-dealloc(newmem)
-
-{
-// ORIGINAL CODE - INJECTION POINT: "halo.exe"+B2FB2
-
-"halo.exe"+B2F8A: 8B 54 24 4C              -  mov edx,[esp+4C]
-"halo.exe"+B2F8E: 0F BF CA                 -  movsx ecx,dx
-"halo.exe"+B2F91: 33 DB                    -  xor ebx,ebx
-"halo.exe"+B2F93: 83 F9 12                 -  cmp ecx,12
-"halo.exe"+B2F96: 0F 87 FC 01 00 00        -  ja halo.exe+B3198
-"halo.exe"+B2F9C: 0F B6 89 34 34 4B 00     -  movzx ecx,byte ptr [ecx+halo.exe+B3434]
-"halo.exe"+B2FA3: FF 24 8D 24 34 4B 00     -  jmp dword ptr [ecx*4+halo.exe+B3424]
-"halo.exe"+B2FAA: A8 01                    -  test al,01
-"halo.exe"+B2FAC: 74 1F                    -  je halo.exe+B2FCD
-"halo.exe"+B2FAE: 8B 54 24 20              -  mov edx,[esp+20]
-// ---------- INJECTING HERE ----------
-"halo.exe"+B2FB2: 8B 02                    -  mov eax,[edx]
-"halo.exe"+B2FB4: 33 DB                    -  xor ebx,ebx
-"halo.exe"+B2FB6: 85 C0                    -  test eax,eax
-// ---------- DONE INJECTING  ----------
-"halo.exe"+B2FB8: 0F 8E D3 01 00 00        -  jng halo.exe+B3191
-"halo.exe"+B2FBE: 8D 75 24                 -  lea esi,[ebp+24]
-"halo.exe"+B2FC1: 33 FF                    -  xor edi,edi
-"halo.exe"+B2FC3: E8 B8 89 FF FF           -  call halo.exe+AB980
-"halo.exe"+B2FC8: E9 C7 01 00 00           -  jmp halo.exe+B3194
-"halo.exe"+B2FCD: 8B 4C 24 20              -  mov ecx,[esp+20]
-"halo.exe"+B2FD1: 8B 55 24                 -  mov edx,[ebp+24]
-"halo.exe"+B2FD4: 66 8B 19                 -  mov bx,[ecx]
-"halo.exe"+B2FD7: 89 54 24 1C              -  mov [esp+1C],edx
-"halo.exe"+B2FDB: E9 B8 01 00 00           -  jmp halo.exe+B3198
-}
-</AssemblerScript>
-          <CheatEntries>
-            <CheatEntry>
-              <ID>24</ID>
-              <Description>"isReticleRed"</Description>
-              <LastState Value="3069617210" RealAddress="003D0020"/>
-              <VariableType>4 Bytes</VariableType>
-              <Address>isReticleRed</Address>
-            </CheatEntry>
-          </CheatEntries>
-        </CheatEntry>
         <CheatEntry>
           <ID>28</ID>
-          <Description>"Track Entities"</Description>
+          <Description>"Tick Entities"</Description>
           <LastState/>
           <VariableType>Auto Assembler Script</VariableType>
           <AssemblerScript>{
@@ -946,6 +556,483 @@ dealloc(newmem)
 "halo.exe"+29ECD: 89 8E C4 01 00 00        -  mov [esi+000001C4],ecx
 "halo.exe"+29ED3: 5F                       -  pop edi
 "halo.exe"+29ED4: 5E                       -  pop esi
+}
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>33</ID>
+      <Description>"Static Addresses"</Description>
+      <Options moManualExpandCollapse="1"/>
+      <LastState Value="" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <Address/>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>31</ID>
+          <Description>"IsRunning"</Description>
+          <LastState Value="0" RealAddress="00686A98"/>
+          <VariableType>Byte</VariableType>
+          <Address>halo.exe+286A98</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>32</ID>
+          <Description>"ZeroOnDefocus"</Description>
+          <LastState Value="0" RealAddress="0008CA98"/>
+          <VariableType>4 Bytes</VariableType>
+          <Address>0008CA98</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>43</ID>
+          <Description>"mysteryReticleStructurePointer"</Description>
+          <LastState Value="400002E8" RealAddress="006F1D6C"/>
+          <ShowAsHex>1</ShowAsHex>
+          <VariableType>4 Bytes</VariableType>
+          <Address>halo.exe+2F1D6C</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>44</ID>
+          <Description>"headingCopyX"</Description>
+          <LastState Value="1" RealAddress="40102D34"/>
+          <VariableType>Float</VariableType>
+          <Address>40102D34</Address>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>45</ID>
+              <Description>"headingCopyY"</Description>
+              <LastState Value="0.7785433531" RealAddress="40102D38"/>
+              <VariableType>Float</VariableType>
+              <Address>+4</Address>
+              <CheatEntries>
+                <CheatEntry>
+                  <ID>46</ID>
+                  <Description>"headingCopyZ"</Description>
+                  <LastState Value="-0.6206658483" RealAddress="40102D3C"/>
+                  <VariableType>Float</VariableType>
+                  <Address>+4</Address>
+                </CheatEntry>
+              </CheatEntries>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>47</ID>
+          <Description>"headingCopyX2"</Description>
+          <LastState Value="-0.09297370911" RealAddress="40102D40"/>
+          <VariableType>Float</VariableType>
+          <Address>40102D40</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>30</ID>
+      <Description>"Bot Hacks"</Description>
+      <Options moManualExpandCollapse="1" moActivateChildrenAsWell="1" moDeactivateChildrenAsWell="1"/>
+      <LastState Value="" Activated="1" RealAddress="00000000"/>
+      <GroupHeader>1</GroupHeader>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>37</ID>
+          <Description>"Track Player Angles"</Description>
+          <Options moHideChildren="1" moManualExpandCollapse="1"/>
+          <LastState Activated="1"/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>// Injection copy pointer to player angles.
+[ENABLE]
+
+aobscanmodule(INJECT_readYaw,halo.exe,D8 47 0C 8B 5C 24 30)
+alloc(newmem,$1000)
+globalalloc(anglesPtr, 4)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [anglesPtr], edi
+  fadd dword ptr [edi+0C]
+  mov ebx,[esp+30]
+  jmp return
+
+INJECT_readYaw:
+  jmp newmem
+  nop 2
+return:
+registersymbol(INJECT_readYaw)
+
+[DISABLE]
+
+INJECT_readYaw:
+  db D8 47 0C 8B 5C 24 30
+
+unregistersymbol(INJECT_readYaw)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: "halo.exe"+721B3
+
+"halo.exe"+7217A: 8B 0D A0 6F 74 00        -  mov ecx,[halo.exe+346FA0]
+"halo.exe"+72180: 8B 91 14 01 00 00        -  mov edx,[ecx+00000114]
+"halo.exe"+72186: 8D 74 24 30              -  lea esi,[esp+30]
+"halo.exe"+7218A: 89 54 24 2C              -  mov [esp+2C],edx
+"halo.exe"+7218E: C7 44 24 18 43 02 BF BF  -  mov [esp+18],BFBF0243
+"halo.exe"+72196: C7 44 24 1C 43 02 BF 3F  -  mov [esp+1C],3FBF0243
+"halo.exe"+7219E: E8 7D FE FF FF           -  call halo.exe+72020
+"halo.exe"+721A3: 66 8B 6C 24 34           -  mov bp,[esp+34]
+"halo.exe"+721A8: 66 83 FD FF              -  cmp bp,-01
+"halo.exe"+721AC: D9 84 24 B8 00 00 00     -  fld dword ptr [esp+000000B8]
+// ---------- INJECTING HERE ----------
+"halo.exe"+721B3: D8 47 0C                 -  fadd dword ptr [edi+0C]
+"halo.exe"+721B6: 8B 5C 24 30              -  mov ebx,[esp+30]
+// ---------- DONE INJECTING  ----------
+"halo.exe"+721BA: D9 5F 0C                 -  fstp dword ptr [edi+0C]
+"halo.exe"+721BD: 0F 84 DB 01 00 00        -  je halo.exe+7239E
+"halo.exe"+721C3: 8B 0D B0 03 86 00        -  mov ecx,[halo.exe+4603B0]
+"halo.exe"+721C9: D9 05 C0 2A 67 00        -  fld dword ptr [halo.exe+272AC0]
+"halo.exe"+721CF: 8B 51 34                 -  mov edx,[ecx+34]
+"halo.exe"+721D2: 8B C3                    -  mov eax,ebx
+"halo.exe"+721D4: 25 FF FF 00 00           -  and eax,0000FFFF
+"halo.exe"+721D9: 8D 04 40                 -  lea eax,[eax+eax*2]
+"halo.exe"+721DC: 8B 44 82 08              -  mov eax,[edx+eax*4+08]
+"halo.exe"+721E0: 8B 08                    -  mov ecx,[eax]
+}
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>41</ID>
+              <Description>"yaw"</Description>
+              <LastState Value="0" RealAddress="402AD4B8"/>
+              <VariableType>Float</VariableType>
+              <Address>[anglesPtr]+0C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>42</ID>
+              <Description>"pitch"</Description>
+              <LastState Value="0" RealAddress="402AD4BC"/>
+              <VariableType>Float</VariableType>
+              <Address>[anglesPtr]+10</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>8</ID>
+          <Description>"Track Player (InjCopy playerPtr)"</Description>
+          <Options moHideChildren="1" moManualExpandCollapse="1"/>
+          <LastState Activated="1"/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>// Injection copy player pointer.
+[ENABLE]
+
+aobscanmodule(INJECT_readPlayerHealth,halo.exe,01 00 00 D9 86 E0 00 00 00)
+alloc(newmem,$1000)
+globalalloc(playerPtr, 4)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov [playerPtr], esi
+  fld dword ptr [esi+000000E0]
+  jmp return
+
+INJECT_readPlayerHealth+03:
+  jmp newmem
+  nop
+return:
+registersymbol(INJECT_readPlayerHealth)
+
+[DISABLE]
+
+INJECT_readPlayerHealth+03:
+  db D9 86 E0 00 00 00
+
+unregistersymbol(INJECT_readPlayerHealth)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: "halo.exe"+AFF89
+
+"halo.exe"+AFF63: 8B 44 02 0C           -  mov eax,[edx+eax+0C]
+"halo.exe"+AFF67: 83 F8 FF              -  cmp eax,-01
+"halo.exe"+AFF6A: 0F 84 98 01 00 00     -  je halo.exe+B0108
+"halo.exe"+AFF70: 25 FF FF 00 00        -  and eax,0000FFFF
+"halo.exe"+AFF75: C1 E0 05              -  shl eax,05
+"halo.exe"+AFF78: 8B 6C 28 14           -  mov ebp,[eax+ebp+14]
+"halo.exe"+AFF7C: 8A 46 10              -  mov al,[esi+10]
+"halo.exe"+AFF7F: 33 D2                 -  xor edx,edx
+"halo.exe"+AFF81: A8 04                 -  test al,04
+"halo.exe"+AFF83: 0F 85 60 01 00 00     -  jne halo.exe+B00E9
+// ---------- INJECTING HERE ----------
+"halo.exe"+AFF89: D9 86 E0 00 00 00     -  fld dword ptr [esi+000000E0]
+// ---------- DONE INJECTING  ----------
+"halo.exe"+AFF8F: D8 1D C0 2A 67 00     -  fcomp dword ptr [halo.exe+272AC0]
+"halo.exe"+AFF95: DF E0                 -  fnstsw ax
+"halo.exe"+AFF97: F6 C4 41              -  test ah,41
+"halo.exe"+AFF9A: 0F 85 49 01 00 00     -  jne halo.exe+B00E9
+"halo.exe"+AFFA0: 8A 44 24 14           -  mov al,[esp+14]
+"halo.exe"+AFFA4: 84 C0                 -  test al,al
+"halo.exe"+AFFA6: 0F 84 44 01 00 00     -  je halo.exe+B00F0
+"halo.exe"+AFFAC: 8B 0D 7C 18 6F 00     -  mov ecx,[halo.exe+2F187C]
+"halo.exe"+AFFB2: 8A 41 09              -  mov al,[ecx+09]
+"halo.exe"+AFFB5: 84 C0                 -  test al,al
+}
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>9</ID>
+              <Description>"Address"</Description>
+              <LastState Value="400FE5D0" RealAddress="03840000"/>
+              <ShowAsHex>1</ShowAsHex>
+              <VariableType>4 Bytes</VariableType>
+              <Address>playerPtr</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>13</ID>
+              <Description>"X"</Description>
+              <LastState Value="29.00210571" RealAddress="400FE62C"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+5C</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>14</ID>
+              <Description>"Z"</Description>
+              <LastState Value="30.74775887" RealAddress="400FE630"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+60</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>10</ID>
+              <Description>"Y"</Description>
+              <LastState Value="100.5618439" RealAddress="400FE634"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+64</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>11</ID>
+              <Description>"Health"</Description>
+              <LastState Value="1" RealAddress="400FE6B0"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+E0</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>12</ID>
+              <Description>"Shields"</Description>
+              <LastState Value="1" RealAddress="400FE6B4"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+E4</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>15</ID>
+              <Description>"Frags"</Description>
+              <LastState Value="4" RealAddress="400FE8EE"/>
+              <VariableType>Byte</VariableType>
+              <Address>[playerPtr]+31E</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>16</ID>
+              <Description>"Plasmas"</Description>
+              <LastState Value="4" RealAddress="400FE8EF"/>
+              <VariableType>Byte</VariableType>
+              <Address>[playerPtr]+31F</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>17</ID>
+              <Description>"Is In Air"</Description>
+              <LastState Value="0" RealAddress="400FEA9C"/>
+              <VariableType>Byte</VariableType>
+              <Address>[playerPtr]+4CC</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>38</ID>
+              <Description>"Heading X"</Description>
+              <LastState Value="-0.8637595177" RealAddress="400FE800"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+230</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>39</ID>
+              <Description>"Heading Z"</Description>
+              <LastState Value="-0.468318224" RealAddress="400FE804"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+234</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>40</ID>
+              <Description>"Heading Y"</Description>
+              <LastState Value="-0.1860042512" RealAddress="400FE808"/>
+              <VariableType>Float</VariableType>
+              <Address>[playerPtr]+238</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>23</ID>
+          <Description>"InjCopy isReticleRed"</Description>
+          <Options moHideChildren="1" moManualExpandCollapse="1"/>
+          <LastState Activated="1"/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{
+  This script injection copies isReticleRed.
+}
+
+[ENABLE]
+
+aobscanmodule(INJECT_readIsReticleRed,halo.exe,8B 02 33 DB 85 C0)
+alloc(newmem,$1000)
+globalalloc(isReticleRed, 1)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  mov eax,[edx]
+  mov [isReticleRed], eax
+  xor ebx,ebx
+  test eax,eax
+  jmp return
+
+INJECT_readIsReticleRed:
+  jmp newmem
+  nop
+return:
+registersymbol(INJECT_readIsReticleRed)
+
+[DISABLE]
+
+INJECT_readIsReticleRed:
+  db 8B 02 33 DB 85 C0
+
+unregistersymbol(INJECT_readIsReticleRed)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: "halo.exe"+B2FB2
+
+"halo.exe"+B2F8A: 8B 54 24 4C              -  mov edx,[esp+4C]
+"halo.exe"+B2F8E: 0F BF CA                 -  movsx ecx,dx
+"halo.exe"+B2F91: 33 DB                    -  xor ebx,ebx
+"halo.exe"+B2F93: 83 F9 12                 -  cmp ecx,12
+"halo.exe"+B2F96: 0F 87 FC 01 00 00        -  ja halo.exe+B3198
+"halo.exe"+B2F9C: 0F B6 89 34 34 4B 00     -  movzx ecx,byte ptr [ecx+halo.exe+B3434]
+"halo.exe"+B2FA3: FF 24 8D 24 34 4B 00     -  jmp dword ptr [ecx*4+halo.exe+B3424]
+"halo.exe"+B2FAA: A8 01                    -  test al,01
+"halo.exe"+B2FAC: 74 1F                    -  je halo.exe+B2FCD
+"halo.exe"+B2FAE: 8B 54 24 20              -  mov edx,[esp+20]
+// ---------- INJECTING HERE ----------
+"halo.exe"+B2FB2: 8B 02                    -  mov eax,[edx]
+"halo.exe"+B2FB4: 33 DB                    -  xor ebx,ebx
+"halo.exe"+B2FB6: 85 C0                    -  test eax,eax
+// ---------- DONE INJECTING  ----------
+"halo.exe"+B2FB8: 0F 8E D3 01 00 00        -  jng halo.exe+B3191
+"halo.exe"+B2FBE: 8D 75 24                 -  lea esi,[ebp+24]
+"halo.exe"+B2FC1: 33 FF                    -  xor edi,edi
+"halo.exe"+B2FC3: E8 B8 89 FF FF           -  call halo.exe+AB980
+"halo.exe"+B2FC8: E9 C7 01 00 00           -  jmp halo.exe+B3194
+"halo.exe"+B2FCD: 8B 4C 24 20              -  mov ecx,[esp+20]
+"halo.exe"+B2FD1: 8B 55 24                 -  mov edx,[ebp+24]
+"halo.exe"+B2FD4: 66 8B 19                 -  mov bx,[ecx]
+"halo.exe"+B2FD7: 89 54 24 1C              -  mov [esp+1C],edx
+"halo.exe"+B2FDB: E9 B8 01 00 00           -  jmp halo.exe+B3198
+}
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>24</ID>
+              <Description>"isReticleRed"</Description>
+              <LastState Value="0" RealAddress="03840120"/>
+              <VariableType>4 Bytes</VariableType>
+              <Address>isReticleRed</Address>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>49</ID>
+          <Description>"Tick Visible Entities"</Description>
+          <LastState Activated="1"/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{
+    This script hooks read a line that's called when an
+    entity is visible and tells the bot to update the entity.
+}
+
+loadlibrary(luaclient-i386.dll)
+luacall(openLuaServer('CELUASERVER'))
+
+CELUA_ServerName:
+db 'CELUASERVER',0
+
+globalalloc(functionString, 256)
+functionString:
+db 'tickEntity(parameter)',0
+[ENABLE]
+
+aobscanmodule(INJECT_calledWhenVisible2,halo.exe,00 8B 45 00 8B 0D 14 BC 87 00) // should be unique
+alloc(newmem,$1000)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+  push ecx
+  push edx
+     push ebp
+     push functionString
+     call CELUA_ExecuteFunction
+  pop edx
+  pop ecx
+  mov eax,[ebp+00]
+  mov ecx,[halo.exe+47BC14]
+  jmp return
+
+INJECT_calledWhenVisible2+01:
+  jmp newmem
+  nop 4
+return:
+registersymbol(INJECT_calledWhenVisible2)
+
+[DISABLE]
+
+INJECT_calledWhenVisible2+01:
+  db 8B 45 00 8B 0D 14 BC 87 00
+
+unregistersymbol(INJECT_calledWhenVisible2)
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: "halo.exe"+10EEC7
+
+"halo.exe"+10EEA2: 89 44 24 44              -  mov [esp+44],eax
+"halo.exe"+10EEA6: 89 44 24 40              -  mov [esp+40],eax
+"halo.exe"+10EEAA: EB 0D                    -  jmp halo.exe+10EEB9
+"halo.exe"+10EEAC: B9 0A 00 00 00           -  mov ecx,0000000A
+"halo.exe"+10EEB1: 8B F0                    -  mov esi,eax
+"halo.exe"+10EEB3: 8D 7C 24 20              -  lea edi,[esp+20]
+"halo.exe"+10EEB7: F3 A5                    - repe  movsd 
+"halo.exe"+10EEB9: 8B 7C 24 10              -  mov edi,[esp+10]
+"halo.exe"+10EEBD: F6 45 10 01              -  test byte ptr [ebp+10],01
+"halo.exe"+10EEC1: 0F 85 F9 01 00 00        -  jne halo.exe+10F0C0
+// ---------- INJECTING HERE ----------
+"halo.exe"+10EEC7: 8B 45 00                 -  mov eax,[ebp+00]
+"halo.exe"+10EECA: 8B 0D 14 BC 87 00        -  mov ecx,[halo.exe+47BC14]
+// ---------- DONE INJECTING  ----------
+"halo.exe"+10EED0: 25 FF FF 00 00           -  and eax,0000FFFF
+"halo.exe"+10EED5: C1 E0 05                 -  shl eax,05
+"halo.exe"+10EED8: 8B 74 08 14              -  mov esi,[eax+ecx+14]
+"halo.exe"+10EEDC: 8B C3                    -  mov eax,ebx
+"halo.exe"+10EEDE: E8 5D 08 00 00           -  call halo.exe+10F740
+"halo.exe"+10EEE3: D9 5C 24 10              -  fstp dword ptr [esp+10]
+"halo.exe"+10EEE7: 8B 54 24 4C              -  mov edx,[esp+4C]
+"halo.exe"+10EEEB: 8A 42 08                 -  mov al,[edx+08]
+"halo.exe"+10EEEE: 84 C0                    -  test al,al
+"halo.exe"+10EEF0: 0F 85 66 01 00 00        -  jne halo.exe+10F05C
 }
 </AssemblerScript>
         </CheatEntry>
@@ -1657,11 +1744,11 @@ dealloc(newmem)
     </SymbolEntry>
     <SymbolEntry>
       <Name>isReticleRed</Name>
-      <Address>003D0020</Address>
+      <Address>03840120</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>functionString</Name>
-      <Address>003D0030</Address>
+      <Address>03840010</Address>
     </SymbolEntry>
     <SymbolEntry>
       <Name>playerYawPtr</Name>
@@ -1669,7 +1756,7 @@ dealloc(newmem)
     </SymbolEntry>
     <SymbolEntry>
       <Name>anglesPtr</Name>
-      <Address>003D0010</Address>
+      <Address>03840110</Address>
     </SymbolEntry>
   </UserdefinedSymbols>
   <Structures StructVersion="2">
