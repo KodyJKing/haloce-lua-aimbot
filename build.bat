@@ -1,0 +1,1 @@
+msbuild dxhooks/dxhooks.vcxproj /p:Configuration=Debug
