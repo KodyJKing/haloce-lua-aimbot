@@ -13,7 +13,7 @@ end
 
 function gameRunningAndFocused()
     local running = readBytes("halo.exe+286A98") == 1
-    local focused = readInteger(0x0008CA98) ~= 0
+    local focused = getOpenedProcessID() == getForegroundProcess()
     return running and focused
 end
 
