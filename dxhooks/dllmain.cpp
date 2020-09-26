@@ -1,6 +1,4 @@
 #include "dllmain.h"
-#pragma comment(lib, "d3d9.lib")
-// #pragma comment(lib, "d3dx9.lib")
 
 using namespace std;
 
@@ -92,15 +90,16 @@ HRESULT __stdcall setTextureHook(
     DWORD stage,
     IDirect3DBaseTexture9* pTexture
 ) {
-    // if (callCounter++ % 100 == 0) cout << "stage: " << to_string(stage) << endl;
-    // if (firstPTexture == nullptr) firstPTexture = pTexture;
-    // if (stage == 4) pTexture = firstPTexture;
-
     bool isNew = textures.count(pTexture) == 0;
     if (isNew) {
         textures.insert(pTexture);
-        string saveLocation = "C:/Users/Kody/Desktop/textureDump/" + to_string((int)pTexture);
-        // TODO Add d3dx9 lib so we can use D3DXSaveTextureToFile
+        string saveLocation = "C:/Users/Kody/Desktop/textureDump/" + to_string((int)pTexture) + ".png";
+        D3DXSaveTextureToFileA(
+            saveLocation.c_str(),
+            D3DXIFF_PNG,
+            pTexture,
+            NULL
+        );
     }
     int textureCount = textures.size();
     if (callCounter++ % 100 == 0) cout << "texture count: " << to_string(textureCount) << endl;
