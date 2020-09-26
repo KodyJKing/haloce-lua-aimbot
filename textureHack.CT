@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="31">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>4</ID>
+      <Description>"pDevice"</Description>
+      <LastState Value="099A75C0" RealAddress="0071D174"/>
+      <ShowAsHex>1</ShowAsHex>
+      <VariableType>4 Bytes</VariableType>
+      <Address>0071D174</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>"deviceVtable"</Description>
+      <LastState Value="099AA35C" RealAddress="099A75C0"/>
+      <ShowAsHex>1</ShowAsHex>
+      <VariableType>4 Bytes</VariableType>
+      <Address>[0071D174]</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3</ID>
+      <Description>"deviceVtable[0]"</Description>
+      <LastState Value="6B506F19" RealAddress="099AA35C"/>
+      <ShowAsHex>1</ShowAsHex>
+      <VariableType>4 Bytes</VariableType>
+      <Address>[[0071D174]]</Address>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry Color="80000008">
+      <Description>callSetTexture</Description>
+      <AddressString>halo.exe+1186A7</AddressString>
+      <Before>
+        <Byte>54</Byte>
+        <Byte>24</Byte>
+        <Byte>0C</Byte>
+        <Byte>52</Byte>
+        <Byte>50</Byte>
+      </Before>
+      <Actual>
+        <Byte>FF</Byte>
+        <Byte>91</Byte>
+        <Byte>04</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Actual>
+      <After>
+        <Byte>85</Byte>
+        <Byte>C0</Byte>
+        <Byte>7D</Byte>
+        <Byte>04</Byte>
+        <Byte>32</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry Color="80000008">
+      <Description>SetTexture</Description>
+      <AddressString>d3d9.dll+D318</AddressString>
+      <Before>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+        <Byte>90</Byte>
+      </Before>
+      <Actual>
+        <Byte>8B</Byte>
+        <Byte>FF</Byte>
+      </Actual>
+      <After>
+        <Byte>55</Byte>
+        <Byte>8B</Byte>
+        <Byte>EC</Byte>
+        <Byte>8B</Byte>
+        <Byte>45</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols>
+    <SymbolEntry>
+      <Name>hasBeenCalledOnce</Name>
+      <Address>0A520000</Address>
+    </SymbolEntry>
+  </UserdefinedSymbols>
+</CheatTable>

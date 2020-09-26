@@ -1,0 +1,24 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "C/C++: cl.exe build active file",
+			"command": "msbuild",
+			"args": [
+				"dxhooks.vcxproj",
+				"/p:Configuration=Debug",
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/dxhooks"
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
+}
