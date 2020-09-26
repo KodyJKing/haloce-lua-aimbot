@@ -1,7 +1,6 @@
-// dllmain.cpp : Defines the entry point for the DLL application.
 #include "dllmain.h"
-
 #pragma comment(lib, "d3d9.lib")
+// #pragma comment(lib, "d3dx9.lib")
 
 using namespace std;
 
@@ -33,10 +32,9 @@ DWORD __stdcall myThread(LPVOID lpParameter) {
 
     hookSetTexture();
 
-    int updateMeAndRecompileToTestUnloading = 42;
     if (!err) {
         while (TRUE) {
-            Sleep(100);
+            Sleep(50);
             if (GetAsyncKeyState(VK_F9))
                 break;
         }
@@ -48,12 +46,17 @@ DWORD __stdcall myThread(LPVOID lpParameter) {
     FreeLibraryAndExitThread(myHModule, 0);
 }
 
-void** getDeviceVirtualTable() {
+IDirect3DDevice9* getPDevice() {
     // Found device location by backtracing a device method call.
     // Found device method using virtual table from dummy device.
     // https://gist.github.com/KodyJKing/d7b374b29998dfdd7d631430164f3e50
     IDirect3DDevice9** ppDevice = (IDirect3DDevice9**)0x0071D174;
     IDirect3DDevice9* pDevice = *ppDevice;
+    return pDevice;
+}
+
+void** getDeviceVirtualTable() {
+    IDirect3DDevice9* pDevice = getPDevice();
     void** vTable = *(void***)(pDevice);
     return vTable;
 }
@@ -80,12 +83,27 @@ void hookSetTexture() {
     setTextureHookRecord = addHook("SetTexture", vTable, 65, setTextureHook);
 }
 
+// IDirect3DBaseTexture9* firstPTexture = nullptr;
+
+set<IDirect3DBaseTexture9*> textures;
 int callCounter = 0;
 HRESULT __stdcall setTextureHook(
     IDirect3DDevice9* pThisDevice,
     DWORD stage,
     IDirect3DBaseTexture9* pTexture
 ) {
-    if (callCounter++ % 100 == 0) cout << "logging from within hook!" << endl;
+    // if (callCounter++ % 100 == 0) cout << "stage: " << to_string(stage) << endl;
+    // if (firstPTexture == nullptr) firstPTexture = pTexture;
+    // if (stage == 4) pTexture = firstPTexture;
+
+    bool isNew = textures.count(pTexture) == 0;
+    if (isNew) {
+        textures.insert(pTexture);
+        string saveLocation = "C:/Users/Kody/Desktop/textureDump/" + to_string((int)pTexture);
+        // TODO Add d3dx9 lib so we can use D3DXSaveTextureToFile
+    }
+    int textureCount = textures.size();
+    if (callCounter++ % 100 == 0) cout << "texture count: " << to_string(textureCount) << endl;
+
     return ((SetTextureFunc)setTextureHookRecord.oldMethod)(pThisDevice, stage, pTexture);
 }
