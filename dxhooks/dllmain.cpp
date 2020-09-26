@@ -21,12 +21,14 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     return TRUE;
 }
 
+const string outdir = filesystem::current_path().string() + string("\\TEXTURE_DUMP\\");
 DWORD __stdcall myThread(LPVOID lpParameter) {
     AllocConsole();
     FILE* pFile;
     auto err = freopen_s(&pFile, "CONOUT$", "w", stdout);
 
     cout << "Hello from module:  " << to_string((int)myHModule) << endl;
+    cout << "Output dir: " << outdir << endl;
 
     hookSetTexture();
 
@@ -81,28 +83,67 @@ void hookSetTexture() {
     setTextureHookRecord = addHook("SetTexture", vTable, 65, setTextureHook);
 }
 
-// IDirect3DBaseTexture9* firstPTexture = nullptr;
-
-set<IDirect3DBaseTexture9*> textures;
 int callCounter = 0;
 HRESULT __stdcall setTextureHook(
     IDirect3DDevice9* pThisDevice,
     DWORD stage,
     IDirect3DBaseTexture9* pTexture
 ) {
+    registerTexture(pTexture);
+    return ((SetTextureFunc)setTextureHookRecord.oldMethod)(pThisDevice, stage, pTexture);
+}
+
+set<IDirect3DBaseTexture9*> textures;
+void registerTexture(IDirect3DBaseTexture9* pTexture) {
+    if (pTexture == nullptr)
+        return;
+
     bool isNew = textures.count(pTexture) == 0;
     if (isNew) {
         textures.insert(pTexture);
-        string saveLocation = "C:/Users/Kody/Desktop/textureDump/" + to_string((int)pTexture) + ".png";
-        D3DXSaveTextureToFileA(
-            saveLocation.c_str(),
-            D3DXIFF_PNG,
-            pTexture,
-            NULL
-        );
-    }
-    int textureCount = textures.size();
-    if (callCounter++ % 100 == 0) cout << "texture count: " << to_string(textureCount) << endl;
+        uint64_t hash;
+        try {
+            cout << "Hashing texture " << to_string((int)pTexture) << endl;
+            hash = computeTextureHash(pTexture);
+            // string saveLocation = "C:/Users/Kody/Desktop/textureDump/" + to_string(hash) + ".png";
+            string saveLocation = outdir + to_string(hash) + ".png";
+            cout << "Saving texture to " << saveLocation << endl;
+            D3DXSaveTextureToFileA(
+                saveLocation.c_str(),
+                D3DXIFF_PNG,
+                pTexture,
+                NULL
+            );
+        }
+        catch (int e) {
+            cout << "Error hashing and saving texture: " << to_string(e);
+        }
 
-    return ((SetTextureFunc)setTextureHookRecord.oldMethod)(pThisDevice, stage, pTexture);
+        int textureCount = textures.size();
+        cout << "texture count: " << to_string(textureCount) << endl;
+    }
+}
+
+uint64_t computeTextureHash(IDirect3DBaseTexture9* pTexture) {
+    ID3DXBuffer* pBuffer;
+    auto err = D3DXSaveTextureToFileInMemory(
+        &pBuffer,
+        D3DXIFF_PNG,
+        pTexture,
+        NULL
+    );
+    if (err) throw err;
+    if (pBuffer == nullptr) throw 42;
+    DWORD size = pBuffer->GetBufferSize();
+    LPVOID buffer = pBuffer->GetBufferPointer();
+    uint64_t result = hashBuffer((BYTE*)buffer, size);
+    pBuffer->Release();
+    return result;
+}
+
+uint64_t hashBuffer(BYTE* buf, DWORD length) {
+    uint64_t result = 5381;
+    for (DWORD i = 0; i < length; i++)
+        result = ((result << 5) + result) + buf[i];
+    return result;
 }

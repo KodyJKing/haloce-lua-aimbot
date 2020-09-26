@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <iostream>
+#include <filesystem>
 #include <string>
 #include <set>
 #include <d3d9.h>
@@ -26,8 +27,10 @@ typedef HRESULT(__stdcall* CreateTextureFunc)(
 DWORD __stdcall myThread(LPVOID lpParameter);
 
 void hookSetTexture();
-
 HRESULT __stdcall setTextureHook(IDirect3DDevice9* pThisDevice, DWORD stage, IDirect3DBaseTexture9* pTexture);
+void registerTexture(IDirect3DBaseTexture9* pTexture);
+uint64_t computeTextureHash(IDirect3DBaseTexture9* pTexture);
+uint64_t hashBuffer(BYTE* buf, DWORD length);
 
 IDirect3DDevice9* getPDevice();
 void** getDeviceVirtualTable();
@@ -39,6 +42,5 @@ struct HookRecord {
     void* oldMethod;
     void* newMethod;
 };
-
 HookRecord addHook(const char* description, void** vtable, int methodIndex, void* newMethod);
 void removeHook(HookRecord record);
