@@ -28,6 +28,8 @@ typedef HRESULT(__stdcall* CreateTextureFunc)(
 
 DWORD __stdcall myThread(LPVOID lpParameter);
 
+HRESULT createTextureFromFile(IDirect3DDevice9* pDevice, std::filesystem::path path, D3DPOOL pool, IDirect3DTexture9** ppTexture);
+
 void loadSwaps();
 
 void hookSetTexture();

@@ -4,7 +4,7 @@ using namespace std;
 
 HMODULE myHModule;
 HookRecord setTextureHookRecord;
-unordered_map < uint64_t, IDirect3DBaseTexture9*> textureOverrides;
+unordered_map < uint64_t, IDirect3DTexture9*> textureOverrides;
 unordered_map < IDirect3DBaseTexture9*, uint64_t> textureHashes;
 mutex mtx;
 
@@ -65,31 +65,47 @@ void loadSwaps() {
 
     cout << "(re)loading texture overrides" << endl;
 
-    if (textureOverrides.size() > 0) {
-        // I don't think we can safely release these textures since halo can get a reference to these textures.
-        // for (auto [hash, pTexture] : textureOverrides)
-        //     pTexture->Release();
-        textureOverrides.clear();
-    }
-
     auto pDevice = getPDevice();
     for (auto entry : filesystem::directory_iterator(indir)) {
-        IDirect3DTexture9* pTexture;
-        D3DXCreateTextureFromFile(
-            pDevice,
-            entry.path().c_str(),
-            &pTexture
-        );
-
         // Get file hash from filename.
         string filename = entry.path().filename().string();
         filename = filename.substr(0, filename.length() - 4);
         uint64_t hash = stoull(filename);
 
-        textureOverrides[hash] = pTexture;
+        IDirect3DTexture9* pTexture;
+        if (textureOverrides.count(hash) > 0) {
+            cout << "replacing texture override" << endl;
+            createTextureFromFile(pDevice, entry.path(), D3DPOOL_SYSTEMMEM, &pTexture);
+            auto pExistingTexture = textureOverrides[hash];
+            auto err = pExistingTexture->AddDirtyRect(NULL);
+            if (err) cout << "failed setting texture dirty with error code: " << to_string(err) << endl;
+            err = pDevice->UpdateTexture(pTexture, pExistingTexture);
+            if (err) cout << "failed texture replacement with error code: " << to_string(err) << endl;
+            pTexture->Release();
+        } else {
+            createTextureFromFile(pDevice, entry.path(), D3DPOOL_DEFAULT, &pTexture);
+            textureOverrides[hash] = pTexture;
+        }
+
     }
 
     mtx.unlock();
+}
+
+HRESULT createTextureFromFile(IDirect3DDevice9* pDevice, filesystem::path path, D3DPOOL pool, IDirect3DTexture9** ppTexture) {
+    return D3DXCreateTextureFromFileEx(
+        pDevice,
+        path.c_str(),
+        D3DX_DEFAULT,
+        D3DX_DEFAULT,
+        D3DX_DEFAULT, 0,
+        D3DFMT_UNKNOWN,
+        pool,
+        D3DX_DEFAULT,
+        D3DX_DEFAULT, 0,
+        NULL, NULL,
+        ppTexture
+    );
 }
 
 IDirect3DDevice9* getPDevice() {
