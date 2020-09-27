@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <string>
 #include <unordered_map>
+#include <mutex>
 #include <set>
 #include <d3d9.h>
 #include <d3dx9.h>

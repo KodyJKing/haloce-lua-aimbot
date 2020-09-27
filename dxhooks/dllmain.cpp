@@ -4,9 +4,9 @@ using namespace std;
 
 HMODULE myHModule;
 HookRecord setTextureHookRecord;
-set<IDirect3DBaseTexture9*> textures;
 unordered_map < uint64_t, IDirect3DBaseTexture9*> textureOverrides;
-unordered_map < IDirect3DBaseTexture9*, IDirect3DBaseTexture9*> textureInstanceMap;
+unordered_map < IDirect3DBaseTexture9*, uint64_t> textureHashes;
+mutex textureOverrideMutex;
 
 BOOL APIENTRY DllMain(HMODULE hModule,
     DWORD  ul_reason_for_call,
@@ -42,6 +42,8 @@ DWORD __stdcall myThread(LPVOID lpParameter) {
             Sleep(50);
             if (GetAsyncKeyState(VK_F9))
                 break;
+            if (GetAsyncKeyState(VK_F5))
+                loadSwaps();
         }
     }
 
@@ -52,6 +54,8 @@ DWORD __stdcall myThread(LPVOID lpParameter) {
 }
 
 void loadSwaps() {
+    textureOverrideMutex.lock();
+    cout << "(re)loading texture overrides" << endl;
     textureOverrides.clear();
     for (auto entry : filesystem::directory_iterator(indir)) {
         IDirect3DTexture9* pTexture;
@@ -68,6 +72,7 @@ void loadSwaps() {
 
         textureOverrides[hash] = pTexture;
     }
+    textureOverrideMutex.unlock();
 }
 
 IDirect3DDevice9* getPDevice() {
@@ -113,10 +118,15 @@ HRESULT __stdcall setTextureHook(
     DWORD stage,
     IDirect3DBaseTexture9* pTexture
 ) {
-    if (textureInstanceMap.count(pTexture) > 0)
-        pTexture = textureInstanceMap[pTexture];
-    else
+    if (textureHashes.count(pTexture) > 0) {
+        uint64_t hash = textureHashes[pTexture];
+        textureOverrideMutex.lock();
+        if (textureOverrides.count(hash) > 0)
+            pTexture = textureOverrides[hash];
+        textureOverrideMutex.unlock();
+    } else {
         registerTexture(pTexture);
+    }
     return ((SetTextureFunc)setTextureHookRecord.oldMethod)(pThisDevice, stage, pTexture);
 }
 
@@ -124,34 +134,25 @@ void registerTexture(IDirect3DBaseTexture9* pTexture) {
     if (pTexture == nullptr)
         return;
 
-    bool isNew = textures.count(pTexture) == 0;
-    if (isNew) {
-        textures.insert(pTexture);
-        uint64_t hash;
-        try {
-            // cout << "Hashing texture " << to_string((int)pTexture) << endl;
-            hash = computeTextureHash(pTexture);
-            string saveLocation = outdir + to_string(hash) + ".png";
-            // cout << "Saving texture to " << saveLocation << endl;
-            // D3DXSaveTextureToFileA(
-            //     saveLocation.c_str(),
-            //     D3DXIFF_PNG,
-            //     pTexture,
-            //     NULL
-            // );
-            if (textureOverrides.count(hash) > 0) {
-                cout << "Swapping texture with hash " << to_string(hash) << endl;
-                IDirect3DBaseTexture9* newPTexture = textureOverrides[hash];
-                textureInstanceMap[pTexture] = newPTexture;
-            }
-        }
-        catch (int e) {
-            cout << "Error hashing and saving texture: " << to_string(e);
-        }
-
-        int textureCount = textures.size();
-        cout << "texture count: " << to_string(textureCount) << endl;
+    uint64_t hash;
+    try {
+        // cout << "Hashing texture " << to_string((int)pTexture) << endl;
+        hash = computeTextureHash(pTexture);
+        textureHashes[pTexture] = hash;
+        // string saveLocation = outdir + to_string(hash) + ".png";
+        // cout << "Saving texture to " << saveLocation << endl;
+        // D3DXSaveTextureToFileA(
+        //     saveLocation.c_str(),
+        //     D3DXIFF_PNG,
+        //     pTexture,
+        //     NULL
+        // );
+    } catch (int e) {
+        cout << "Error hashing and saving texture: " << to_string(e);
     }
+
+    int textureCount = textureHashes.size();
+    cout << "texture count: " << to_string(textureCount) << endl;
 }
 
 uint64_t computeTextureHash(IDirect3DBaseTexture9* pTexture) {
