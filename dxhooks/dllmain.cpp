@@ -6,7 +6,7 @@ HMODULE myHModule;
 HookRecord setTextureHookRecord;
 unordered_map < uint64_t, IDirect3DBaseTexture9*> textureOverrides;
 unordered_map < IDirect3DBaseTexture9*, uint64_t> textureHashes;
-mutex textureOverrideMutex;
+mutex mtx;
 
 BOOL APIENTRY DllMain(HMODULE hModule,
     DWORD  ul_reason_for_call,
@@ -26,6 +26,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 
 const string outdir = filesystem::current_path().string() + string("\\TEXTURE_DUMP\\");
 const string indir = filesystem::current_path().string() + string("\\TEXTURE_SWAP\\");
+bool watingForF5Up = false;
 DWORD __stdcall myThread(LPVOID lpParameter) {
     AllocConsole();
     FILE* pFile;
@@ -42,8 +43,14 @@ DWORD __stdcall myThread(LPVOID lpParameter) {
             Sleep(50);
             if (GetAsyncKeyState(VK_F9))
                 break;
-            if (GetAsyncKeyState(VK_F5))
+
+            auto f5State = GetAsyncKeyState(VK_F5);
+            if (!watingForF5Up && f5State) {
+                watingForF5Up = true;
                 loadSwaps();
+            } else if (!f5State) {
+                watingForF5Up = false;
+            }
         }
     }
 
@@ -54,13 +61,22 @@ DWORD __stdcall myThread(LPVOID lpParameter) {
 }
 
 void loadSwaps() {
-    textureOverrideMutex.lock();
+    mtx.lock();
+
     cout << "(re)loading texture overrides" << endl;
-    textureOverrides.clear();
+
+    if (textureOverrides.size() > 0) {
+        // I don't think we can safely release these textures since halo can get a reference to these textures.
+        // for (auto [hash, pTexture] : textureOverrides)
+        //     pTexture->Release();
+        textureOverrides.clear();
+    }
+
+    auto pDevice = getPDevice();
     for (auto entry : filesystem::directory_iterator(indir)) {
         IDirect3DTexture9* pTexture;
         D3DXCreateTextureFromFile(
-            getPDevice(),
+            pDevice,
             entry.path().c_str(),
             &pTexture
         );
@@ -72,7 +88,8 @@ void loadSwaps() {
 
         textureOverrides[hash] = pTexture;
     }
-    textureOverrideMutex.unlock();
+
+    mtx.unlock();
 }
 
 IDirect3DDevice9* getPDevice() {
@@ -118,15 +135,15 @@ HRESULT __stdcall setTextureHook(
     DWORD stage,
     IDirect3DBaseTexture9* pTexture
 ) {
+    mtx.lock();
     if (textureHashes.count(pTexture) > 0) {
         uint64_t hash = textureHashes[pTexture];
-        textureOverrideMutex.lock();
         if (textureOverrides.count(hash) > 0)
             pTexture = textureOverrides[hash];
-        textureOverrideMutex.unlock();
     } else {
         registerTexture(pTexture);
     }
+    mtx.unlock();
     return ((SetTextureFunc)setTextureHookRecord.oldMethod)(pThisDevice, stage, pTexture);
 }
 
