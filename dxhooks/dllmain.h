@@ -2,6 +2,7 @@
 #include <iostream>
 #include <filesystem>
 #include <string>
+#include <unordered_map>
 #include <set>
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -25,6 +26,8 @@ typedef HRESULT(__stdcall* CreateTextureFunc)(
     );
 
 DWORD __stdcall myThread(LPVOID lpParameter);
+
+void loadSwaps();
 
 void hookSetTexture();
 HRESULT __stdcall setTextureHook(IDirect3DDevice9* pThisDevice, DWORD stage, IDirect3DBaseTexture9* pTexture);

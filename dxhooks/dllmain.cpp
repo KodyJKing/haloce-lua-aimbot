@@ -4,6 +4,9 @@ using namespace std;
 
 HMODULE myHModule;
 HookRecord setTextureHookRecord;
+set<IDirect3DBaseTexture9*> textures;
+unordered_map < uint64_t, IDirect3DBaseTexture9*> textureOverrides;
+unordered_map < IDirect3DBaseTexture9*, IDirect3DBaseTexture9*> textureInstanceMap;
 
 BOOL APIENTRY DllMain(HMODULE hModule,
     DWORD  ul_reason_for_call,
@@ -22,6 +25,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 }
 
 const string outdir = filesystem::current_path().string() + string("\\TEXTURE_DUMP\\");
+const string indir = filesystem::current_path().string() + string("\\TEXTURE_SWAP\\");
 DWORD __stdcall myThread(LPVOID lpParameter) {
     AllocConsole();
     FILE* pFile;
@@ -30,6 +34,7 @@ DWORD __stdcall myThread(LPVOID lpParameter) {
     cout << "Hello from module:  " << to_string((int)myHModule) << endl;
     cout << "Output dir: " << outdir << endl;
 
+    loadSwaps();
     hookSetTexture();
 
     if (!err) {
@@ -44,6 +49,25 @@ DWORD __stdcall myThread(LPVOID lpParameter) {
     if (pFile) fclose(pFile);
     FreeConsole();
     FreeLibraryAndExitThread(myHModule, 0);
+}
+
+void loadSwaps() {
+    textureOverrides.clear();
+    for (auto entry : filesystem::directory_iterator(indir)) {
+        IDirect3DTexture9* pTexture;
+        D3DXCreateTextureFromFile(
+            getPDevice(),
+            entry.path().c_str(),
+            &pTexture
+        );
+
+        // Get file hash from filename.
+        string filename = entry.path().filename().string();
+        filename = filename.substr(0, filename.length() - 4);
+        uint64_t hash = stoull(filename);
+
+        textureOverrides[hash] = pTexture;
+    }
 }
 
 IDirect3DDevice9* getPDevice() {
@@ -89,11 +113,13 @@ HRESULT __stdcall setTextureHook(
     DWORD stage,
     IDirect3DBaseTexture9* pTexture
 ) {
-    registerTexture(pTexture);
+    if (textureInstanceMap.count(pTexture) > 0)
+        pTexture = textureInstanceMap[pTexture];
+    else
+        registerTexture(pTexture);
     return ((SetTextureFunc)setTextureHookRecord.oldMethod)(pThisDevice, stage, pTexture);
 }
 
-set<IDirect3DBaseTexture9*> textures;
 void registerTexture(IDirect3DBaseTexture9* pTexture) {
     if (pTexture == nullptr)
         return;
@@ -103,17 +129,21 @@ void registerTexture(IDirect3DBaseTexture9* pTexture) {
         textures.insert(pTexture);
         uint64_t hash;
         try {
-            cout << "Hashing texture " << to_string((int)pTexture) << endl;
+            // cout << "Hashing texture " << to_string((int)pTexture) << endl;
             hash = computeTextureHash(pTexture);
-            // string saveLocation = "C:/Users/Kody/Desktop/textureDump/" + to_string(hash) + ".png";
             string saveLocation = outdir + to_string(hash) + ".png";
-            cout << "Saving texture to " << saveLocation << endl;
-            D3DXSaveTextureToFileA(
-                saveLocation.c_str(),
-                D3DXIFF_PNG,
-                pTexture,
-                NULL
-            );
+            // cout << "Saving texture to " << saveLocation << endl;
+            // D3DXSaveTextureToFileA(
+            //     saveLocation.c_str(),
+            //     D3DXIFF_PNG,
+            //     pTexture,
+            //     NULL
+            // );
+            if (textureOverrides.count(hash) > 0) {
+                cout << "Swapping texture with hash " << to_string(hash) << endl;
+                IDirect3DBaseTexture9* newPTexture = textureOverrides[hash];
+                textureInstanceMap[pTexture] = newPTexture;
+            }
         }
         catch (int e) {
             cout << "Error hashing and saving texture: " << to_string(e);
@@ -147,3 +177,4 @@ uint64_t hashBuffer(BYTE* buf, DWORD length) {
         result = ((result << 5) + result) + buf[i];
     return result;
 }
+
